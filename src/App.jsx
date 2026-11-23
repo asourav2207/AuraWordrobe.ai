@@ -8,6 +8,7 @@ import InstaTrendCloner from './components/InstaTrendCloner';
 import ThreeDBodyTryOn from './components/ThreeDBodyTryOn';
 import CartDrawer from './components/CartDrawer';
 import PhotoScanModal from './components/PhotoScanModal';
+import ExecutiveDossierView from './components/ExecutiveDossierView';
 import { wardrobeDatabase } from './data/wardrobeDatabase';
 import { Sparkles, ShieldCheck, ShoppingBag, ArrowRight } from 'lucide-react';
 
@@ -209,6 +210,7 @@ export default function App() {
               setActiveTab('tryon');
               showToast(`Loaded "${item.name}" into 3D Try-On Studio!`);
             }}
+            onOpenScanModal={() => setIsScanModalOpen(true)}
           />
         )}
 
@@ -251,6 +253,11 @@ export default function App() {
           <BrandSizingMatrix
             profile={currentProfile}
           />
+        )}
+
+        {/* Tab 6: Executive Strategy & Architecture Dossier */}
+        {activeTab === 'dossier' && (
+          <ExecutiveDossierView />
         )}
 
       </main>

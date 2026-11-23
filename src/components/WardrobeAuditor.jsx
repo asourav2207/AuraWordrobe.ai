@@ -18,7 +18,9 @@ import {
   ExternalLink,
   Camera,
   Tag,
-  ArrowRight
+  ArrowRight,
+  Cloud,
+  CheckCircle2
 } from 'lucide-react';
 
 export default function WardrobeAuditor({ 
@@ -28,7 +30,8 @@ export default function WardrobeAuditor({
   onDeleteItem, 
   onAddNewItem, 
   onSwitchToRecommendations,
-  onOpenTryOn
+  onOpenTryOn,
+  onOpenScanModal
 }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
@@ -124,7 +127,7 @@ export default function WardrobeAuditor({
         </div>
 
         {/* Triage Pills & Actions */}
-        <div className="flex items-center space-x-2.5 self-start md:self-auto">
+        <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
           <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-800 rounded-xl border border-emerald-200 text-xs font-bold">
             <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
             <span>{keepCount} Keep</span>
@@ -134,6 +137,18 @@ export default function WardrobeAuditor({
             <span>{replaceCount} Replace</span>
           </div>
 
+          {/* Google Photos Sync Action Button */}
+          {onOpenScanModal && (
+            <button
+              onClick={onOpenScanModal}
+              className="px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-sm transition"
+              title="Open Google Photos Ingestion & Cloud Sync"
+            >
+              <Cloud className="w-3.5 h-3.5 text-blue-200" />
+              <span>Google Photos Sync</span>
+            </button>
+          )}
+
           <button
             onClick={() => setShowAddModal(true)}
             className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold flex items-center space-x-1 shadow-sm transition"
@@ -142,6 +157,35 @@ export default function WardrobeAuditor({
             <span>+ Add Item</span>
           </button>
         </div>
+      </div>
+
+      {/* Google Photos API & Cloud Ingestion Showcase Banner */}
+      <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white p-4 sm:p-5 rounded-2xl border border-blue-800/60 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-start sm:items-center space-x-3.5">
+          <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-400/30 flex items-center justify-center shrink-0">
+            <Cloud className="w-5 h-5 text-blue-300" />
+          </div>
+          <div>
+            <div className="flex items-center space-x-2">
+              <span className="text-xs uppercase tracking-wider font-extrabold text-blue-300">
+                Google Photos API Ingestion Connected
+              </span>
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            </div>
+            <p className="text-xs text-slate-200 mt-0.5">
+              Account: <span className="text-white font-semibold">aditya.sourav@gmail.com</span> • Multi-photo album ingestion, image deletion & computer-vision decomposition active.
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={onOpenScanModal}
+          className="self-start sm:self-auto px-4 py-2 bg-white text-slate-900 hover:bg-blue-50 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-sm transition shrink-0"
+        >
+          <Camera className="w-3.5 h-3.5 text-blue-600" />
+          <span>Manage Ingested Photos</span>
+          <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+        </button>
       </div>
 
       {/* Standardized Toolbar: Search, Filters, & View Toggle */}
