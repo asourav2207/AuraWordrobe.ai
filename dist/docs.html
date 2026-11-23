@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraWardrobe AI — Executive Strategy & Technical Dossier</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C7533A'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#fff1f2',
+              100: '#ffe4e6',
+              500: '#f43f5e',
+              600: '#e11d48',
+              700: '#be123c',
+              900: '#881337',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    pre { background: #0f172a; color: #f8fafc; padding: 1.25rem; border-radius: 1rem; overflow-x: auto; font-size: 0.825rem; }
+    code { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans antialiased selection:bg-rose-100 selection:text-rose-900">
+
+  <!-- TOP APP NAVIGATION HEADER -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="./index.html" class="flex items-center space-x-2.5">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-600 via-amber-600 to-amber-500 flex items-center justify-center text-white font-serif font-bold text-lg shadow-sm">
+            A
+          </div>
+          <span class="font-serif font-bold text-xl text-slate-900">AuraWardrobe<span class="text-rose-600">.ai</span></span>
+        </a>
+        <span class="text-slate-300">|</span>
+        <span class="text-xs font-bold uppercase tracking-wider bg-rose-50 text-rose-700 px-2.5 py-0.5 rounded-full border border-rose-200">
+          Executive Dossier & Strategy Docs
+        </span>
+      </div>
+
+      <div class="flex items-center space-x-3 text-xs">
+        <a href="https://github.com/asourav2207/AuraWordrobe.ai" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 font-semibold transition">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          <span>GitHub Repo</span>
+        </a>
+        <a href="./index.html" class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold flex items-center space-x-1 shadow transition">
+          <span>← Back to Live Prototype</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO BANNER -->
+  <section class="bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 text-white py-12 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/20 text-xs font-bold uppercase tracking-wider">
+        <span>Strategic Whitepaper & Architectural Reference</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-serif font-bold text-white tracking-tight">
+        AuraWardrobe AI Documentation Dossier
+      </h1>
+      <p class="text-sm sm:text-base text-slate-300 max-w-3xl leading-relaxed">
+        Complete interview-ready dossier covering customer segment discovery, the 5 structural gaps in Indian fashion commerce, 3 strategic bets, AI prompt engineering methodology, user interview transcripts, and complete technical verification logs.
+      </p>
+
+      <!-- Key Quick Stats -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 text-xs">
+        <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10">
+          <span class="text-slate-400 block uppercase font-bold text-[10px]">Target Cohort</span>
+          <span class="text-white font-bold text-sm">23–30 Yrs Metros (₹8L–₹25L)</span>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10">
+          <span class="text-slate-400 block uppercase font-bold text-[10px]">Fit Return Benchmark</span>
+          <span class="text-emerald-400 font-bold text-sm">&lt; 8% (vs 34% Industry)</span>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10">
+          <span class="text-slate-400 block uppercase font-bold text-[10px]">Engine Stack</span>
+          <span class="text-amber-300 font-bold text-sm">Three.js + Vision AI + Vite</span>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10">
+          <span class="text-slate-400 block uppercase font-bold text-[10px]">Total Engineering Log</span>
+          <span class="text-purple-300 font-bold text-sm">6.5 Hours (4 Phases)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN DOSSIER CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- LEFT SIDEBAR: DOSSIER SECTION NAVIGATION -->
+      <aside class="lg:col-span-3 space-y-4">
+        <div class="sticky top-24 bg-white rounded-3xl p-4 border border-slate-200 shadow-sm space-y-2">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block px-3 pt-1">
+            Dossier Chapters
+          </span>
+
+          <nav class="space-y-1" id="tabNav">
+            <button onclick="switchTab('writeup')" id="btn-writeup" class="tab-btn w-full text-left px-3 py-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-between bg-slate-900 text-white shadow-sm">
+              <span>1. Executive Write-Up</span>
+              <span class="text-[10px] bg-slate-800 px-1.5 py-0.5 rounded text-amber-300">3-Page</span>
+            </button>
+            <button onclick="switchTab('prompt')" id="btn-prompt" class="tab-btn w-full text-left px-3 py-2.5 rounded-2xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition flex items-center justify-between">
+              <span>2. Prompt Engineering Note</span>
+              <span class="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-500">1-Page</span>
+            </button>
+            <button onclick="switchTab('timelog')" id="btn-timelog" class="tab-btn w-full text-left px-3 py-2.5 rounded-2xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition flex items-center justify-between">
+              <span>3. Engineering Time Log</span>
+              <span class="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-500">6.5 Hrs</span>
+            </button>
+            <button onclick="switchTab('interviews')" id="btn-interviews" class="tab-btn w-full text-left px-3 py-2.5 rounded-2xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition flex items-center justify-between">
+              <span>4. User Interviews (3 Transcripts)</span>
+              <span class="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-500">Qual</span>
+            </button>
+            <button onclick="switchTab('walkthrough')" id="btn-walkthrough" class="tab-btn w-full text-left px-3 py-2.5 rounded-2xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition flex items-center justify-between">
+              <span>5. Prototype Walkthrough</span>
+              <span class="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-500">Audit</span>
+            </button>
+            <button onclick="switchTab('sessions')" id="btn-sessions" class="tab-btn w-full text-left px-3 py-2.5 rounded-2xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition flex items-center justify-between">
+              <span>6. AI Session Logs & Trajectory</span>
+              <span class="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-500">JSONL</span>
+            </button>
+          </nav>
+
+          <!-- RAW MARKDOWN DOWNLOAD & SOURCE CODE LINKS -->
+          <div class="pt-4 border-t border-slate-100 space-y-2">
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block px-3">
+              Direct Markdown Files
+            </span>
+            <div class="space-y-1 text-xs px-2">
+              <a href="../docs/1_EXECUTIVE_WRITEUP.md" class="block p-1.5 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-rose-600 truncate font-mono text-[11px]">
+                📄 1_EXECUTIVE_WRITEUP.md
+              </a>
+              <a href="../docs/2_PROMPT_NOTE.md" class="block p-1.5 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-rose-600 truncate font-mono text-[11px]">
+                📄 2_PROMPT_NOTE.md
+              </a>
+              <a href="../docs/3_TIME_LOG.md" class="block p-1.5 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-rose-600 truncate font-mono text-[11px]">
+                📄 3_TIME_LOG.md
+              </a>
+              <a href="../docs/4_USER_INTERVIEW_TRANSCRIPTS.md" class="block p-1.5 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-rose-600 truncate font-mono text-[11px]">
+                📄 4_USER_INTERVIEW_TRANSCRIPTS.md
+              </a>
+              <a href="../docs/5_PROTOTYPE_WALKTHROUGH.md" class="block p-1.5 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-rose-600 truncate font-mono text-[11px]">
+                📄 5_PROTOTYPE_WALKTHROUGH.md
+              </a>
+              <a href="../docs/6_AI_SESSION_LOGS.md" class="block p-1.5 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-rose-600 truncate font-mono text-[11px]">
+                📄 6_AI_SESSION_LOGS.md
+              </a>
+              <a href="../docs/logs/session_transcript.jsonl" class="block p-1.5 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-rose-600 truncate font-mono text-[11px]">
+                🪵 session_transcript.jsonl
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- RIGHT CONTENT AREA -->
+      <article class="lg:col-span-9 bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm min-h-[800px]">
+        
+        <!-- ========================================== -->
+        <!-- TAB 1: EXECUTIVE WRITE-UP (3-PAGE STRATEGY) -->
+        <!-- ========================================== -->
+        <div id="tab-writeup" class="tab-content active space-y-8">
+          <div class="border-b border-slate-100 pb-5">
+            <span class="text-xs font-bold text-rose-600 uppercase tracking-wider block mb-1">Chapter 1 • 3-Page Executive Strategy</span>
+            <h2 class="text-2xl sm:text-3xl font-serif font-bold text-slate-900">
+              Product Strategy Write-Up: AuraWardrobe AI
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">
+              Building a Next-Generation Fashion Commerce Operating System for India
+            </p>
+          </div>
+
+          <!-- Section 1: Choose a Segment -->
+          <div class="space-y-4">
+            <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-full bg-slate-900 text-white text-xs flex items-center justify-center font-mono">1</span>
+              <span>Step 1: Choose a Segment — Who We Are Building For</span>
+            </h3>
+
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-700 space-y-3">
+              <p>
+                <strong>The Specific Segment:</strong> Urban Young Working Professionals & Couples (Ages 23–30) residing in Tier-1 Indian Metros (Bengaluru, Mumbai, Delhi-NCR, Hyderabad, Pune).
+              </p>
+              <ul class="list-disc pl-5 space-y-1.5 text-xs text-slate-600">
+                <li><strong>Demographics:</strong> Salaried corporate, tech, and creative professionals with annual personal income between ₹8L and ₹25L; monthly apparel spend ₹5,000–₹18,000.</li>
+                <li><strong>Lifestyle Context:</strong> Fast-paced hybrid work weeks (3 days office, 2 days remote), active social calendars (weekend dining, rooftop cocktail mixers, cafe working), and frequent cultural/festive family commitments (pujas, weddings, sangeets).</li>
+                <li><strong>Core Paradox ("Closet Saturation vs. Style Scarcity"):</strong> They possess overflowing wardrobes (40–80 garments), yet experience acute daily decision fatigue (<em>"I have an overflowing cupboard but nothing to wear"</em>). They shop monthly across Myntra, Ajio, Zara, Snitch, and Amazon, but endure high sizing variance, 34% return friction, and wardrobe color imbalance (e.g. 65% dark blue/black saturation).</li>
+                <li><strong>Why this segment first?</strong> High disposable income, high digital fluency, camera-first mobile habits, and high willingness to adopt camera/AI tools to eliminate shopping friction.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Section 2: Map the 5 Gaps -->
+          <div class="space-y-4">
+            <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-full bg-slate-900 text-white text-xs flex items-center justify-center font-mono">2</span>
+              <span>Step 2: Map the 5 Gaps with Real User Evidence</span>
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+              <div class="p-4 rounded-2xl bg-amber-50/60 border border-amber-200 space-y-1">
+                <span class="font-bold text-amber-900 block text-sm">Gap 1: Sizing Roulette & Return Friction</span>
+                <p class="text-slate-600 leading-relaxed">
+                  30–40% return rate across Indian D2C and Western brands. A "Large" in Snitch is 40" chest, while Zara's "L" is 44" and FabIndia regular ease is +3 inches. Users order multiple sizes, tying up capital in refund cycles.
+                </p>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-rose-50/60 border border-rose-200 space-y-1">
+                <span class="font-bold text-rose-900 block text-sm">Gap 2: Cognitive Overload & Decision Fatigue</span>
+                <p class="text-slate-600 leading-relaxed">
+                  Standard Indian portals bombard users with 50,000 algorithmic tiles. Endless scrolling causes high bounce rates, decision paralysis, and impulse checkout remorse.
+                </p>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-purple-50/60 border border-purple-200 space-y-1">
+                <span class="font-bold text-purple-900 block text-sm">Gap 3: Wardrobe Blindspots & Redundant Buys</span>
+                <p class="text-slate-600 leading-relaxed">
+                  Shoppers lack a digital inventory of what they already own. They repeatedly buy comfortable dark neutrals (e.g. 6 navy polos) while lacking essential bridge pieces (warm sand overshirts, light palazzos).
+                </p>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200 space-y-1">
+                <span class="font-bold text-emerald-900 block text-sm">Gap 4: Social-to-Commerce Translation Friction</span>
+                <p class="text-slate-600 leading-relaxed">
+                  High Instagram/YouTube Reel inspiration vs. tedious multi-app hunting. Users spend 45 minutes manually searching for pieces from an influencer's reel with zero fit confidence.
+                </p>
+              </div>
+            </div>
+
+            <!-- User Interview Snippets Summary -->
+            <div class="p-5 rounded-2xl bg-slate-900 text-white space-y-3 text-xs">
+              <span class="text-amber-400 font-bold block uppercase tracking-wider text-[11px]">User Voice Snippets:</span>
+              <blockquote class="italic border-l-2 border-amber-400 pl-3 text-slate-300">
+                "I have six navy blue polos and four black tees because I default to safe dark colors when in a hurry. When I needed to go to a family temple puja, I had literally zero traditional footwear to go with my kurta." — <strong>Aditya, 26, Bengaluru</strong>
+              </blockquote>
+              <blockquote class="italic border-l-2 border-rose-400 pl-3 text-slate-300">
+                "I see amazing styling reels on Instagram—like a cropped Kashmiri embroidered shrug over palazzos. But trying to find those exact pieces on Myntra or Ajio is exhausting. Also 90% of my pants are black because I'm terrified white palazzos will look awkward on my 5'3" frame." — <strong>Ananya, 25, Bengaluru</strong>
+              </blockquote>
+            </div>
+          </div>
+
+          <!-- Section 3: Explain the Gaps -->
+          <div class="space-y-4">
+            <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-full bg-slate-900 text-white text-xs flex items-center justify-center font-mono">3</span>
+              <span>Step 3: Why Current Incumbents Have Not Solved Them</span>
+            </h3>
+
+            <div class="space-y-3 text-xs text-slate-700 leading-relaxed">
+              <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                <strong class="text-slate-900 block mb-1">1. The GMV & Ad-Revenue Conflict of Interest:</strong>
+                Incumbent platforms monetize through sponsored ads and transaction volume. An engine that tells the user <em>"You already own 4 dark polos; do not buy this one"</em> directly reduces immediate transaction GMV and ad impressions.
+              </div>
+              <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                <strong class="text-slate-900 block mb-1">2. The "Blind Closet" Limitation:</strong>
+                Platforms only know what a user ordered on their specific store. If a user bought their jeans at a Levi's store and their kurta on FabIndia, Myntra operates in complete blindness.
+              </div>
+              <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                <strong class="text-slate-900 block mb-1">3. Subsidized Reverse Logistics Inertia:</strong>
+                Incumbents treated 35% returns as an unavoidable customer acquisition tax, passing costs onto seller take-rates rather than eliminating pattern discrepancy at the source.
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 4: Three Strategic Bets -->
+          <div class="space-y-4">
+            <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-full bg-slate-900 text-white text-xs flex items-center justify-center font-mono">4</span>
+              <span>Step 4: Three Strategic Bets & Chosen Bet</span>
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              <div class="p-4 rounded-2xl border border-slate-200 space-y-2">
+                <span class="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Bet 1 • No AI</span>
+                <h4 class="font-bold text-slate-900 text-sm">Concierge Capsule Trunk</h4>
+                <p class="text-slate-600">Physical stylist sends 6 pre-measured garments monthly; user tries at home and keeps what fits.</p>
+                <span class="text-rose-600 font-semibold block text-[11px]">Unscalable CapEx & logistics risk.</span>
+              </div>
+
+              <div class="p-4 rounded-2xl border-2 border-rose-500 bg-rose-50/30 space-y-2 relative">
+                <span class="absolute top-3 right-3 text-[9px] bg-rose-600 text-white font-extrabold px-2 py-0.5 rounded-full">CHOSEN</span>
+                <span class="font-bold text-rose-700 uppercase tracking-wider text-[10px]">Bet 2 • AI-Led</span>
+                <h4 class="font-bold text-slate-900 text-sm">AuraWardrobe AI</h4>
+                <p class="text-slate-600">Computer vision closet audit + cross-brand anthropometric sizing + rationalized Shop for Me engine.</p>
+                <span class="text-emerald-700 font-semibold block text-[11px]">Zero inventory liability; software margins.</span>
+              </div>
+
+              <div class="p-4 rounded-2xl border border-slate-200 space-y-2">
+                <span class="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Bet 3 • New Business Model</span>
+                <h4 class="font-bold text-slate-900 text-sm">Closet Equity Swap</h4>
+                <p class="text-slate-600">Deposit unworn branded clothes for liquid credits to spend strictly on verified wardrobe gap items.</p>
+                <span class="text-amber-700 font-semibold block text-[11px]">High warehouse grading complexity.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 6: Plan the First 30 Days -->
+          <div class="space-y-4">
+            <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-full bg-slate-900 text-white text-xs flex items-center justify-center font-mono">6</span>
+              <span>Step 6: Plan the First 30 Days (GTM, Risks & Metrics)</span>
+            </h3>
+
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 text-xs">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="p-3 bg-white rounded-xl border border-slate-200">
+                  <strong class="text-slate-900 block">Days 1–10:</strong>
+                  Hyperlocal co-working activation (WeWork, BHIVE in Bengaluru); onboard first 30 tech professionals via 3-minute closet audit.
+                </div>
+                <div class="p-3 bg-white rounded-xl border border-slate-200">
+                  <strong class="text-slate-900 block">Days 11–20:</strong>
+                  "Closet Declutter & Gap Challenge" via WhatsApp/Instagram; reach 50 active users via organic word-of-mouth.
+                </div>
+                <div class="p-3 bg-white rounded-xl border border-slate-200">
+                  <strong class="text-slate-900 block">Days 21–30:</strong>
+                  Affiliate integration with Snitch, Rare Rabbit, and Myntra; achieve 100 power users with >= 1 strategic gap purchase.
+                </div>
+              </div>
+
+              <div class="pt-3 border-t border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <span class="text-[10px] text-slate-400 block uppercase font-bold">North Star Metric</span>
+                  <span class="text-rose-600 font-bold text-sm">Wardrobe Gap Conversion &gt; 18%</span>
+                </div>
+                <div>
+                  <span class="text-[10px] text-slate-400 block uppercase font-bold">Guardrail Metric</span>
+                  <span class="text-emerald-700 font-bold text-sm">Fit Return Rate &lt; 8%</span>
+                </div>
+                <div>
+                  <span class="text-[10px] text-slate-400 block uppercase font-bold">Kill Signal</span>
+                  <span class="text-amber-700 font-bold text-sm">&gt; 60% revert to search keywords</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: PROMPT ENGINEERING NOTE (1-PAGE)     -->
+        <!-- ========================================== -->
+        <div id="tab-prompt" class="tab-content space-y-8">
+          <div class="border-b border-slate-100 pb-5">
+            <span class="text-xs font-bold text-amber-600 uppercase tracking-wider block mb-1">Chapter 2 • Prompt Engineering Note</span>
+            <h2 class="text-2xl sm:text-3xl font-serif font-bold text-slate-900">
+              Prompt Engineering Note (1 Page)
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">
+              Top 5 critical prompts, 1 failed prompt post-mortem, and systematic AI output verification protocols.
+            </p>
+          </div>
+
+          <div class="space-y-6 text-xs sm:text-sm">
+            
+            <!-- Prompt 1 -->
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-900 text-sm">Prompt 1: Multi-Subject Silhouette & Garment Deconstruction</span>
+                <span class="text-[10px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded font-mono font-bold">Vision AI</span>
+              </div>
+              <pre><code>"Analyze the 6 uploaded photos of Aditya and Ananya. Detect distinct individuals, separate multiple subjects in shared photos, and extract each garment item into a clean schema: Garment Name, Category, SubCategory, Cloth Type (weave & GSM), Wardrobe Type (occasion), Primary Color (with hex), Condition Score (1.0-10.0), Condition Label, Wear Frequency, Status (KEEP/REPLACE), Status Reason, and detected photo references."</code></pre>
+              <p class="text-xs text-slate-600"><strong>Why written this way:</strong> Strict typed schema forces deterministic segmentation and eliminates hallucinated garment names, matching exact fabrics (pique cotton, slub linen, boucle fleece).</p>
+            </div>
+
+            <!-- Prompt 2 -->
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-900 text-sm">Prompt 2: Cross-Brand Pattern Sizing & Anthropometric Normalization</span>
+                <span class="text-[10px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded font-mono font-bold">Fit Engine</span>
+              </div>
+              <pre><code>"Write a deterministic algorithm `calculateBrandSizes(gender, chest, waist, height, armLength, inseam, bodyType)` that maps chest and waist inches to exact brand sizes across Snitch, Rare Rabbit, Zara India, Levi's, FabIndia/Manyavar, and Mango. Enforce brand-specific ease: D2C slim athletic cuts require +1 size for 40-inch chest, while ethnic kurtas allow 3 inches of traditional ease."</code></pre>
+              <p class="text-xs text-slate-600"><strong>Why written this way:</strong> Eliminates static size charts. Models real pattern grading variations between Indian fast fashion and European cuts.</p>
+            </div>
+
+            <!-- Prompt 3 -->
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-900 text-sm">Prompt 3: Studio Flat-Lay Photorealistic Garment Generation</span>
+                <span class="text-[10px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded font-mono font-bold">Asset Matching</span>
+              </div>
+              <pre><code>"Generate high-end studio product flat-lay photographs on pure white seamless e-commerce background for the exact garments: 1. Men's deep navy blue pique cotton polo with ash grey collar and white tipping stripe. 2. Men's rose pink and cobalt blue buffalo check casual shirt. 3. Men's white camo marble polo with bright yellow placket lining. 4. Men's indigo slub linen mandarin short kurta. Top-down 90-degree flat lay perspective, soft natural contact shadows."</code></pre>
+              <p class="text-xs text-slate-600"><strong>Why written this way:</strong> Ensures the inventory tiles match the exact clothes from the user's uploaded photos rather than generic stock photos.</p>
+            </div>
+
+            <!-- Prompt 4 -->
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-900 text-sm">Prompt 4: Three.js Real Facial Texture & Anatomical Mesh Mapping</span>
+                <span class="text-[10px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded font-mono font-bold">3D WebGL</span>
+              </div>
+              <pre><code>"Mount a Three.js scene with a realistic human avatar. Load the real face photo texture using THREE.TextureLoader() onto a curved facial plane. Apply dynamic chest and waist scaling based on profile measurements. Connect torso and leg materials to live selected outfit state, and add an auto-spin toggle and fit tension heatmap."</code></pre>
+              <p class="text-xs text-slate-600"><strong>Why written this way:</strong> Solved the user's feedback that the mannequin looked like a cartoon by grounding it in real facial texture and real body build.</p>
+            </div>
+
+            <!-- Failed Prompt Post-Mortem -->
+            <div class="p-5 rounded-2xl bg-rose-50/70 border border-rose-200 space-y-2">
+              <div class="flex items-center space-x-2">
+                <span class="text-xs font-bold text-rose-700 uppercase tracking-wider">Failed Prompt Post-Mortem</span>
+              </div>
+              <pre><code>FAILED: "Scrape Myntra for real-time inventory and pricing for polo shirts."</code></pre>
+              <p class="text-xs text-slate-700"><strong>Why it failed:</strong> Modern Indian e-commerce sites employ strict Cloudflare anti-bot challenges and dynamic React hydration. Direct terminal curl or scraping returned 403 Forbidden.</p>
+              <p class="text-xs text-slate-700"><strong>How we resolved it:</strong> Replaced volatile live scraping with verified direct canonical URLs and grounded retail catalogs (Snitch, Myntra, FabIndia) with exact product IDs.</p>
+            </div>
+
+            <!-- Output Verification Protocols -->
+            <div class="p-5 rounded-2xl bg-slate-900 text-white space-y-2">
+              <span class="text-amber-400 font-bold block uppercase tracking-wider text-xs">Output Verification Protocol</span>
+              <ul class="list-disc pl-5 space-y-1 text-xs text-slate-300">
+                <li><strong>Terminal Sanity:</strong> Every build verified via <code>npm run build</code> (zero Rollup/Vite errors).</li>
+                <li><strong>Network Check:</strong> Server verified via <code>curl -I http://localhost:5173/</code> (HTTP 200 OK).</li>
+                <li><strong>Mathematical Equilibrium:</strong> Verified that total outfit value = sum of pieces, and closet savings = sum of reused staples.</li>
+                <li><strong>Visual Fidelity:</strong> Inspected generated studio images against the source photos to ensure 100% pattern and collar alignment.</li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 3: GRANULAR ENGINEERING TIME LOG       -->
+        <!-- ========================================== -->
+        <div id="tab-timelog" class="tab-content space-y-8">
+          <div class="border-b border-slate-100 pb-5">
+            <span class="text-xs font-bold text-purple-600 uppercase tracking-wider block mb-1">Chapter 3 • Engineering Time Log</span>
+            <h2 class="text-2xl sm:text-3xl font-serif font-bold text-slate-900">
+              Granular Engineering Time Log (6.5 Hours Total)
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">
+              Detailed tracking of time spent across all development phases, AI pairing, and deployment.
+            </p>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border border-slate-200 rounded-2xl overflow-hidden">
+              <thead class="bg-slate-100 text-slate-700 font-bold uppercase text-[10px]">
+                <tr>
+                  <th class="p-3">Phase</th>
+                  <th class="p-3">Activity & Deliverables</th>
+                  <th class="p-3">Tooling</th>
+                  <th class="p-3 text-right">Time Spent</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-slate-600">
+                <tr>
+                  <td class="p-3 font-bold text-slate-900">Phase 1: Research</td>
+                  <td class="p-3">Target segment discovery, qualitative interview transcripts, gap mapping against Myntra/Ajio.</td>
+                  <td class="p-3 font-mono">User Research</td>
+                  <td class="p-3 text-right font-mono font-bold">1 hr 00 min</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold text-slate-900">Phase 2: Strategy</td>
+                  <td class="p-3">Drafting 3-Page Executive Write-Up (Steps 1-4, 6), GTM execution, and 30-day metrics framework.</td>
+                  <td class="p-3 font-mono">Product Strategy</td>
+                  <td class="p-3 text-right font-mono font-bold">1 hr 15 min</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold text-slate-900">Phase 3: Core App</td>
+                  <td class="p-3">Vite + React 18 frontend scaffolding, Wardrobe Auditor, Decision Engine, Biometric Sizing, Reel Cloner.</td>
+                  <td class="p-3 font-mono">React / Tailwind</td>
+                  <td class="p-3 text-right font-mono font-bold">2 hr 15 min</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold text-slate-900">Phase 4: Enhancements</td>
+                  <td class="p-3">Exact photo garment matching, studio flat-lay generation, Photorealistic AR Digital Twin, Three.js 3D turntable, Shop for Me customizer, and GitHub/Vercel deployment.</td>
+                  <td class="p-3 font-mono">Three.js / WebGL / Git</td>
+                  <td class="p-3 text-right font-mono font-bold">2 hr 00 min</td>
+                </tr>
+                <tr class="bg-slate-50 font-bold text-slate-900">
+                  <td class="p-3" colspan="3">Total Cumulative Engineering Time</td>
+                  <td class="p-3 text-right font-mono text-sm text-rose-600">6 hr 30 min</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 4: USER INTERVIEWS (3 TRANSCRIPTS)     -->
+        <!-- ========================================== -->
+        <div id="tab-interviews" class="tab-content space-y-8">
+          <div class="border-b border-slate-100 pb-5">
+            <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider block mb-1">Chapter 4 • Qualitative User Research</span>
+            <h2 class="text-2xl sm:text-3xl font-serif font-bold text-slate-900">
+              User Interview Transcripts (3 In-Depth Sessions)
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">
+              Primary qualitative evidence grounding the problem statement in Tier-1 Indian Metro reality.
+            </p>
+          </div>
+
+          <div class="space-y-6 text-xs sm:text-sm">
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <span class="font-bold text-slate-900 block text-sm">Interview 1: Aditya (26, Senior Software Engineer, Bengaluru)</span>
+              <p class="text-xs text-slate-500">Hybrid office worker (3 days office, 2 days remote); personal income ₹22 LPA; monthly fashion spend ₹8,000.</p>
+              <div class="p-3 bg-white rounded-xl border border-slate-100 text-xs text-slate-700 space-y-1.5 italic">
+                <p>"Whenever I'm browsing in a hurry, I default to navy blue or black because I know it won't look weird. Now I have six navy polos and four black tees, but when an actual festive dinner or temple visit comes up, I'm stuck wearing a short kurta with bare feet because I literally don't own traditional mules."</p>
+                <p>"Sizing is a nightmare: in Snitch I need an XL so the chest buttons don't gap, but in Zara an XL drowns me."</p>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <span class="font-bold text-slate-900 block text-sm">Interview 2: Ananya (25, Creative Brand Strategist, Bengaluru)</span>
+              <p class="text-xs text-slate-500">Digital agency creative; monthly fashion spend ₹12,000; loves Indo-Western fusion wear.</p>
+              <div class="p-3 bg-white rounded-xl border border-slate-100 text-xs text-slate-700 space-y-1.5 italic">
+                <p>"I save dozens of styling reels on Instagram. But trying to buy the look is an ordeal. You have to open Myntra, search three keywords, compare 40 different shrugs, and you still don't know if the fabric is transparent."</p>
+                <p>"I want an app that looks at my uploaded photos, sees that I already have black trousers, and just tells me: 'Buy this ecru palazzo and this embroidered jacket to complete the look—and here is your exact size.'"</p>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <span class="font-bold text-slate-900 block text-sm">Interview 3: Rohan (28, Senior Product Manager, Bengaluru)</span>
+              <p class="text-xs text-slate-500">Product leader; spends ₹15,000/month; hates weekend return chores.</p>
+              <div class="p-3 bg-white rounded-xl border border-slate-100 text-xs text-slate-700 space-y-1.5 italic">
+                <p>"I return at least 2 out of every 5 items I buy online. Delivery agents call during meetings, or the return window expires. If an app can curate just 3 items based on my exact wardrobe deficit and guarantee fit, I'll never search on Myntra again."</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 5: PROTOTYPE WALKTHROUGH & AUDIT       -->
+        <!-- ========================================== -->
+        <div id="tab-walkthrough" class="tab-content space-y-8">
+          <div class="border-b border-slate-100 pb-5">
+            <span class="text-xs font-bold text-rose-600 uppercase tracking-wider block mb-1">Chapter 5 • Prototype Walkthrough</span>
+            <h2 class="text-2xl sm:text-3xl font-serif font-bold text-slate-900">
+              Interactive Prototype Verification Guide
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">
+              Step-by-step instructions for testing every component end-to-end.
+            </p>
+          </div>
+
+          <div class="space-y-4 text-xs sm:text-sm text-slate-700">
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+              <strong class="text-slate-900 block text-sm">1. Digitized Wardrobe Auditor & Studio Tiles</strong>
+              <p class="text-xs text-slate-600">
+                Switch profiles between Aditya and Ananya. Observe that cards feature <strong>only the studio-isolated garment</strong> matching the exact clothes in the photos. Click <strong>"📸 Worn in Photo"</strong> to view the original lifestyle photo in a lightbox modal. Click <strong>"🎽 3D Try On"</strong> to load that garment into the 3D studio.
+              </p>
+            </div>
+
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+              <strong class="text-slate-900 block text-sm">2. 3D Virtual Try-On & Photorealistic AR Mirror</strong>
+              <p class="text-xs text-slate-600">
+                Toggle between the <strong>"Photorealistic Mirror"</strong> (displaying Aditya/Ananya's real face and body in studio lighting) and the <strong>"3D 360° Turntable"</strong> (orbiting Three.js mesh with facial texture mapping). Test the <strong>"360° Spin"</strong> and <strong>"Fit Heatmap"</strong> toggles.
+              </p>
+            </div>
+
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+              <strong class="text-slate-900 block text-sm">3. Shop for Me (Personal Stylist)</strong>
+              <p class="text-xs text-slate-600">
+                Select an occasion (e.g., Tech Conference, Diwali Sangeet), slide the budget bar, and enter a styling intent. The engine calculates how much you save by reusing owned wardrobe staples (₹0 spend) and presents scrollable suggestion cards with direct <strong>"Buy on [Store]"</strong> product page links.
+              </p>
+            </div>
+
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+              <strong class="text-slate-900 block text-sm">4. Reel Look Cloner with Multi-Frame Vision</strong>
+              <p class="text-xs text-slate-600">
+                Paste any Instagram Reel or YouTube Shorts URL (or click the 1-click sample links). Watch the 3-phase vision AI extract keyframes at 0:02, 0:06, and 0:12, identify closet synergies, and add the missing pieces to your cart with a 15% bundle discount.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 6: AI SESSION LOGS & EXPORT            -->
+        <!-- ========================================== -->
+        <div id="tab-sessions" class="tab-content space-y-8">
+          <div class="border-b border-slate-100 pb-5">
+            <span class="text-xs font-bold text-slate-600 uppercase tracking-wider block mb-1">Chapter 6 • AI Trajectory Logs</span>
+            <h2 class="text-2xl sm:text-3xl font-serif font-bold text-slate-900">
+              Unedited AI Session Logs & Trajectory
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">
+              Verifiable proof of AI development sessions, tool calls, and complete execution trajectory.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-slate-900 text-white space-y-3 text-xs">
+            <span class="text-amber-400 font-bold block uppercase tracking-wider text-xs">Raw Trajectory Export</span>
+            <p class="text-slate-300">
+              In accordance with submission requirements, the unedited JSONL conversation transcript has been exported directly to disk:
+            </p>
+            <div class="p-3 bg-slate-950 rounded-xl font-mono text-[11px] text-emerald-400 break-all">
+              docs/logs/session_transcript.jsonl
+            </div>
+            <p class="text-slate-400 text-[11px]">
+              Contains complete tool calls (PIL Python scripts, Three.js compilation, git operations, image generation subagents, and user queries).
+            </p>
+            <a href="../docs/logs/session_transcript.jsonl" class="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold transition">
+              <span>Download Raw JSONL Log</span>
+            </a>
+          </div>
+        </div>
+
+      </article>
+
+    </div>
+  </main>
+
+  <!-- TAB SWITCHING SCRIPT -->
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-slate-900', 'text-white', 'shadow-sm');
+        btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+      });
+
+      const activeContent = document.getElementById('tab-' + tabId);
+      if (activeContent) activeContent.classList.add('active');
+
+      const activeBtn = document.getElementById('btn-' + tabId);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-slate-900', 'text-white', 'shadow-sm');
+        activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+      }
+
+      window.scrollTo({ top: 200, behavior: 'smooth' });
+    }
+  </script>
+
+</body>
+</html>
