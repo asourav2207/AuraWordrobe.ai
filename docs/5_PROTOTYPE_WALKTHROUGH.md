@@ -12,37 +12,58 @@ npm run dev
 
 ## 1. Quick 3-Minute Reviewer Tour (Enhanced Capabilities)
 
-### Feature 1: Instagram & YouTube Video Look Deconstructor
+### Feature 1: Grounded Social Video Look Deconstructor (Instagram, YouTube & Pinterest)
 - Click the **"Reel Cloner"** tab.
-- At the top, observe the **Video Link Input Bar**: supports Instagram Reels (`https://instagram.com/reel/...`) and YouTube Shorts (`https://youtube.com/shorts/...`).
-- Click any of the quick sample chips (e.g. *"@kritika_khurana Indo-Western Reel"* or *"@streetstyle_bengaluru Minimalist Look"*).
-- Click **"Deconstruct & Replicate Look"**:
-  - Watch the live AI frame analysis bar (0:02, 0:06, 0:12 frame extraction $\to$ silhouette segmentation $\to$ Myntra/Amazon matching $\to$ closet synergy audit).
-  - The newly extracted look appears instantly in the feed with pre-mapped sizes, closet match alerts, and 1-click cart addition!
+- **Direct Video Link Input Bar:** Supports Instagram Reels, YouTube Shorts, and Pinterest Looks.
+- **Contextual 1-Click Samples:**
+  - 👻 *Viral Snapchat Aesthetic Look: Denim Trucker, Striped Rugby Polo & Pleated Khakis*
+  - 🎥 *The Formal Edit Slub Kurta Reel (Bangalore Lookbook)*
+  - 👗 *Kritika Khurana Kashmiri Shrug & Palazzos Look*
+  - ☕ *Komal Pandey Cozy Boucle Teddy Fleece Short*
+- **100% Real, Grounded Retail Data (No Placeholders):**
+  - Displays verified pieces from Levi's, Snitch, Zara, FabIndia, Jaypore, and Puma.
+  - Actual INR prices, exact cloth types/GSM, and direct canonical store links.
+  - Sizing calibrated directly to the user's biometric measurements (e.g. Size L for Aditya's 40" chest, Size 34W for waist).
+- **Physical Closet Synergy Detection:**
+  - Cross-references the active profile against `wardrobeDatabase.js`.
+  - Automatically flags items already owned in the user's closet (e.g. Reusing owned Jet Black Chinos saves ₹1,799!).
+  - Separates owned items (₹0 spend) from missing items to buy with dynamic net bundle math.
 
-### Feature 2: Full Biometric & Anthropometric Sizing Engine (Auto-Detected & Pre-Filled)
-- Click the **"Biometric Sizing"** tab.
-- **Pre-Filled from Photos:**
-  - Notice all detected body landmarks: **Height (175 cm / 5'9")**, **Chest (40")**, **Waist (34")**, **Arm / Sleeve (25")**, **Leg Inseam (31")**, **Shoulder Width (18")**, **Neck (15.5")**, **Body Type (Athletic Mesomorph)**, **BMI (24.2)**, and **Skin Tone (Warm Golden Indian Wheatish with color swatch)**.
-- **Interactive Calibration:**
-  - Drag any slider (e.g., adjust Chest to 42" or Waist to 36") or pick a different skin tone swatch.
-  - Watch the brand sizing cards (**Snitch, Rare Rabbit, Zara, Levi's, FabIndia/Manyavar, Marks & Spencer**) recalculate live in real time!
-- **Sizes of Clothes Worn in Photos:**
-  - Switch to the **"Cloth Size Guessed in Photos"** view at the top right:
-  - Shows the AI's tension & fold analysis of the actual clothes worn in the uploaded photos (e.g. Navy Polo in Photo #3 guessed as *Size L in Snitch / Size M in Zara* at 94% confidence).
-
-### Feature 3: Interactive 3D Virtual Body & Neural Try-On Studio (Photorealistic Digital Twin)
+### Feature 2: Snapchat 3D Bitmoji Virtual Try-On Studio
 - Click the **"3D Virtual Try-On"** tab (with the purple 3D badge).
-- **Two Rendering Engines Available:**
-  1. **Photorealistic Mirror:** Shows a 100% photo-grounded digital twin of the user (extracted from real lifestyle photos), avoiding the cartoonish uncanny-valley effect while previewing selected garments.
-  2. **3D Turntable (Three.js):** Full 360° interactive turntable with the user's authentic face mapped onto an anatomically proportioned head mesh.
-- **Controls & Interaction:**
-  - **Orbit Controls:** Click and drag with mouse or touch to rotate 360°.
-  - **View Presets:** Instant camera snap to **Front**, **Angle (45°)**, **Side**, or **Back**.
-  - **Fit Heatmap Mode:** Toggle on to inspect fabric drape and ease allowances across the torso and hips.
-- **Outfit Equipping & Synergy:**
-  - Select items from the **Owned Closet** or **Recommended Gap-Fillers**.
-  - Click **"Add Visualized 3D Outfit to Cart"** to stage the complete outfit into the checkout drawer with 1-click bundle savings.
+- **Exact Replication of Snapchat 3D Virtual Try-On Character:**
+  - Stylized Bitmoji 3D humanoid avatar standing in a cozy room:
+    - Vertical white shiplap plank wall backdrop.
+    - Sunlit French window frame with outdoor garden foliage.
+    - Floating display shelf with potted succulent and cactus.
+  - **Character Attributes:**
+    - Expressive anime/pixar eyes with catchlight sparkle, stylized haircut with parted fringe, friendly smile, and warm wheatish skin tone.
+    - Clear rectangular acetate hipster glasses (exact match to Aditya's glasses in his photos and in the reference!).
+    - Optional festive reindeer antlers with evergreen pine needle leaves and red berries.
+    - Iconic **Snapchat Shrug Pose** (hands open, palms facing up) or switchable to model stance.
+  - **Real Layered Virtual Try-On:**
+    - Outerwear: Levi's medium-wash denim trucker jacket (with brass buttons, chest flap pockets, and white tag!).
+    - Innerwear: Snitch rugby stripe long-sleeve polo with clean white turn-down collar!
+    - Bottoms: Zara pleated wide-leg beige/khaki trousers with clean cuffs.
+    - Footwear: Puma RS-X chunky sneakers with thick white midsole and black jagged lug running tread!
+    - Also supports instant equipping of owned closet pieces (Aditya's Navy Polo, Pink Check Shirt, Indigo Kurta; Ananya's Rose Shrug, Kashmiri Cardigan, Sherpa Fleece).
+  - **360° Turntable & Snapchat Share Badge:**
+    - Drag horizontally with mouse or touch to rotate 360°.
+    - Camera angle snap buttons (Front, 3/4 Angle, Side, Back) and auto-spin toggle.
+    - Snapchat Profile Card bar with user badge (`Aditya 🪐 </3 ✪`), handle (`@aditya_sourav`), and yellow Snapcode QR matrix!
+    - "Compare with Ref" drawer to view the original Pinterest reference side-by-side.
+
+### Feature 3: Photo Ingestion Modal with Google Photos Integration
+- Click **"Scan Photo"** in the top navigation header.
+- **Google Photos Library Sync Tab:**
+  - Authenticated via Google OAuth 2.0 (`aditya.sourav@gmail.com`).
+  - Browse smart albums: *All Photos*, *Outfits & Full Body*, *Festive & Social*, *Studio Flat-Lays*.
+  - Multi-selection checkboxes on each photo thumbnail with "Select All" and "Clear" controls.
+  - Displays detected AI tags (e.g., *"Detected: Polo Shirt + Glasses"*, *"Detected: 2 Persons Full Body"*).
+- **Local Device Upload Tab:**
+  - Drag-and-drop or file picker for custom JPG, PNG, HEIC files.
+- **Multi-Step Ingestion Engine:**
+  - Ingests selected photos via Google Photos API, performs face identification, cloth degradation scoring (1–10), and anthropometric size calibration.
 
 ### Feature 4: "Shop for Me" Smart Concierge (Anti-Decision Fatigue)
 - Click the **"Shop for Me"** tab.

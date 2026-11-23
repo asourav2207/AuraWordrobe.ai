@@ -240,6 +240,7 @@ export default function App() {
           <InstaTrendCloner
             trends={wardrobeDatabase.instagramTrends}
             currentGender={currentProfile.gender}
+            profile={currentProfile}
             onAddBundleToCart={handleAddBundleToCart}
             onAddToCart={handleAddToCart}
           />
