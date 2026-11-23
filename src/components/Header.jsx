@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingBag, Sparkles, Shirt, Camera, Compass } from 'lucide-react';
+import { ShoppingBag, Sparkles, Shirt, Camera, Compass, Box, UserCheck } from 'lucide-react';
 
 export default function Header({ 
   activeTab, 
@@ -29,59 +29,75 @@ export default function Header({
                 </span>
               </div>
               <p className="text-xs text-slate-500 hidden sm:block">
-                Intelligent Wardrobe Audit, Zero Decision Fatigue & Indian Sizing
+                3D Virtual Try-On, Biometric Sizing & Anti-Decision Fatigue
               </p>
             </div>
           </div>
 
           {/* Navigation Tabs */}
-          <nav className="hidden md:flex items-center space-x-1 lg:space-x-2 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
+          <nav className="hidden lg:flex items-center space-x-1 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
             <button
               onClick={() => setActiveTab('wardrobe')}
-              className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+              className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
                 activeTab === 'wardrobe'
                   ? 'bg-white text-slate-900 shadow-sm'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
               }`}
             >
               <Shirt className="w-4 h-4 text-rose-600" />
-              <span>Wardrobe Audit</span>
+              <span>Wardrobe</span>
+            </button>
+
+            {/* 3D AR Try-On Studio Tab */}
+            <button
+              onClick={() => setActiveTab('tryon')}
+              className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                activeTab === 'tryon'
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+              }`}
+            >
+              <Box className="w-4 h-4 text-purple-600" />
+              <span>3D Virtual Try-On</span>
+              <span className="text-[9px] bg-purple-600 text-white px-1.5 py-0.5 rounded-full font-extrabold uppercase">
+                3D
+              </span>
             </button>
 
             <button
               onClick={() => setActiveTab('recommendations')}
-              className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+              className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
                 activeTab === 'recommendations'
                   ? 'bg-white text-slate-900 shadow-sm'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
               }`}
             >
               <Sparkles className="w-4 h-4 text-amber-500" />
-              <span>Logical "Why Buy"</span>
+              <span>Why Buy Gaps</span>
             </button>
 
             <button
               onClick={() => setActiveTab('trends')}
-              className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+              className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
                 activeTab === 'trends'
                   ? 'bg-white text-slate-900 shadow-sm'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
               }`}
             >
-              <Compass className="w-4 h-4 text-purple-600" />
-              <span>Insta Look Cloner</span>
+              <Compass className="w-4 h-4 text-pink-600" />
+              <span>Reel Cloner</span>
             </button>
 
             <button
               onClick={() => setActiveTab('sizing')}
-              className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+              className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
                 activeTab === 'sizing'
                   ? 'bg-white text-slate-900 shadow-sm'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
               }`}
             >
-              <span className="text-xs font-mono font-bold text-emerald-600 border border-emerald-300 rounded px-1">IN</span>
-              <span>Brand Sizing</span>
+              <UserCheck className="w-4 h-4 text-emerald-600" />
+              <span>Biometric Sizing</span>
             </button>
           </nav>
 
@@ -113,14 +129,23 @@ export default function Header({
         </div>
 
         {/* Mobile Navigation bar */}
-        <div className="flex md:hidden overflow-x-auto space-x-2 py-2 border-t border-slate-100">
+        <div className="flex lg:hidden overflow-x-auto space-x-2 py-2 border-t border-slate-100">
           <button
             onClick={() => setActiveTab('wardrobe')}
             className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-medium ${
               activeTab === 'wardrobe' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'
             }`}
           >
-            Wardrobe Audit
+            Wardrobe
+          </button>
+          <button
+            onClick={() => setActiveTab('tryon')}
+            className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1 ${
+              activeTab === 'tryon' ? 'bg-purple-600 text-white' : 'bg-purple-50 text-purple-700'
+            }`}
+          >
+            <Box className="w-3 h-3" />
+            <span>3D Try-On</span>
           </button>
           <button
             onClick={() => setActiveTab('recommendations')}
@@ -128,7 +153,7 @@ export default function Header({
               activeTab === 'recommendations' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'
             }`}
           >
-            Why Buy Gaps
+            Why Buy
           </button>
           <button
             onClick={() => setActiveTab('trends')}
@@ -136,7 +161,7 @@ export default function Header({
               activeTab === 'trends' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'
             }`}
           >
-            Insta Looks
+            Reel Cloner
           </button>
           <button
             onClick={() => setActiveTab('sizing')}
@@ -144,13 +169,7 @@ export default function Header({
               activeTab === 'sizing' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'
             }`}
           >
-            Brand Sizing
-          </button>
-          <button
-            onClick={onOpenScanModal}
-            className="whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-medium bg-amber-100 text-amber-900"
-          >
-            + Scan
+            Sizing
           </button>
         </div>
 

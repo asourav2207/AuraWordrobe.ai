@@ -5,6 +5,7 @@ import WardrobeAuditor from './components/WardrobeAuditor';
 import DecisionFatigueReducer from './components/DecisionFatigueReducer';
 import BrandSizingMatrix from './components/BrandSizingMatrix';
 import InstaTrendCloner from './components/InstaTrendCloner';
+import ThreeDBodyTryOn from './components/ThreeDBodyTryOn';
 import CartDrawer from './components/CartDrawer';
 import PhotoScanModal from './components/PhotoScanModal';
 import { wardrobeDatabase } from './data/wardrobeDatabase';
@@ -170,7 +171,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Main Header */}
+      {/* Main Header with 3D Try-On Tab */}
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -193,7 +194,7 @@ export default function App() {
           }}
         />
 
-        {/* Tab 1: Wardrobe Auditor */}
+        {/* Tab 1: Standardized Wardrobe Auditor */}
         {activeTab === 'wardrobe' && (
           <WardrobeAuditor
             profile={currentProfile}
@@ -205,7 +206,16 @@ export default function App() {
           />
         )}
 
-        {/* Tab 2: Decision Fatigue Reducer & Logical "Why Buy" */}
+        {/* Tab 2: 3D Virtual Body & AR Try-On Studio (NEW!) */}
+        {activeTab === 'tryon' && (
+          <ThreeDBodyTryOn
+            profile={currentProfile}
+            onAddToCart={handleAddToCart}
+            onAddBundleToCart={handleAddBundleToCart}
+          />
+        )}
+
+        {/* Tab 3: Decision Fatigue Reducer & Logical "Why Buy" */}
         {activeTab === 'recommendations' && (
           <DecisionFatigueReducer
             profile={currentProfile}
@@ -213,7 +223,7 @@ export default function App() {
           />
         )}
 
-        {/* Tab 3: Instagram Influencer Look Replicator */}
+        {/* Tab 4: Instagram & YouTube Video Look Replicator with URL Pasting */}
         {activeTab === 'trends' && (
           <InstaTrendCloner
             trends={wardrobeDatabase.instagramTrends}
@@ -223,7 +233,7 @@ export default function App() {
           />
         )}
 
-        {/* Tab 4: Brand Sizing Frameworks */}
+        {/* Tab 5: Biometric Sizing & Cloth Size Guesser */}
         {activeTab === 'sizing' && (
           <BrandSizingMatrix
             profile={currentProfile}

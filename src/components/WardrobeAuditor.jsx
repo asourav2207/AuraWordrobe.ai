@@ -6,17 +6,15 @@ import {
   AlertTriangle, 
   PlusCircle, 
   Trash2, 
-  Tag, 
   Eye, 
   Layers, 
-  Share2,
-  Calendar,
   ShieldAlert,
   Search,
   Plus,
   X,
-  RefreshCw,
-  Archive
+  LayoutGrid,
+  List,
+  Check
 } from 'lucide-react';
 
 export default function WardrobeAuditor({ 
@@ -29,8 +27,8 @@ export default function WardrobeAuditor({
 }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
-  const [selectedOccasion, setSelectedOccasion] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
   const [previewPhoto, setPreviewPhoto] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
 
@@ -43,8 +41,7 @@ export default function WardrobeAuditor({
   const [newItemCondition, setNewItemCondition] = useState(9.0);
 
   const categories = ['All', 'Tops', 'Bottoms', 'Layering / Outerwear', 'Ethnic & Festive', 'Winterwear / Loungewear'];
-  const statuses = ['All', 'KEEP', 'REPLACE', 'ADD'];
-  const occasions = ['All', 'Smart Casual / Office', 'Weekend Casual', 'Festive Occasion', 'Evening Social', 'Winterwear / Travel'];
+  const statuses = ['All', 'KEEP', 'REPLACE'];
 
   // Current active items
   const activeItems = items || profile.items;
@@ -52,17 +49,15 @@ export default function WardrobeAuditor({
   const filteredItems = activeItems.filter((item) => {
     const matchesCategory = selectedCategory === 'All' || item.category.toLowerCase().includes(selectedCategory.toLowerCase());
     const matchesStatus = selectedStatus === 'All' || item.status === selectedStatus;
-    const matchesOccasion = selectedOccasion === 'All' || (item.wardrobeType && item.wardrobeType.toLowerCase().includes(selectedOccasion.toLowerCase().split('/')[0].trim()));
     const matchesSearch = searchQuery === '' || 
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
       item.clothType.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.color.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesStatus && matchesOccasion && matchesSearch;
+    return matchesCategory && matchesStatus && matchesSearch;
   });
 
   const keepCount = activeItems.filter(i => i.status === 'KEEP').length;
   const replaceCount = activeItems.filter(i => i.status === 'REPLACE').length;
-  const addCount = 2; // strategic gaps
 
   const handleCreateItem = (e) => {
     e.preventDefault();
@@ -77,13 +72,13 @@ export default function WardrobeAuditor({
       wardrobeType: newItemOccasion,
       color: newItemColor,
       conditionScore: parseFloat(newItemCondition),
-      conditionLabel: newItemCondition >= 8.5 ? "Pristine / Crisp" : newItemCondition >= 7 ? "Good Condition" : "Moderate Wear",
-      wearFrequency: "Regular (3-4 times/month)",
+      conditionLabel: newItemCondition >= 8.5 ? "Pristine" : newItemCondition >= 7 ? "Good Condition" : "Worn Placket",
+      wearFrequency: "3-4x / month",
       detectedInPhotos: [profile.avatar],
       status: "KEEP",
-      statusReason: "User manually inventoried into active wardrobe rotation.",
+      statusReason: "Manually inventoried into active rotation.",
       pairingScore: 90,
-      currentPairs: ["Black Tapered Chinos", "Denim Jeans"],
+      currentPairs: ["Black Chinos", "Denim"],
       brandEstimate: "Custom / Retail",
       retailValueEst: "₹1,999"
     };
@@ -96,270 +91,299 @@ export default function WardrobeAuditor({
   return (
     <div className="space-y-6">
       
-      {/* Overview Banner & Quick Metrics */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm">
+      {/* Top Banner: Standardized Wardrobe Stats */}
+      <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
             <h2 className="text-xl sm:text-2xl font-serif font-bold text-slate-900">
-              {profile.name}'s Digitized Wardrobe Audit
+              {profile.name}'s Digitized Wardrobe
             </h2>
-            <span className="text-xs bg-slate-100 text-slate-700 font-semibold px-2.5 py-0.5 rounded-full border border-slate-300">
-              {activeItems.length} Extracted Garments
+            <span className="text-xs bg-slate-100 text-slate-700 font-bold px-2.5 py-0.5 rounded-full border border-slate-200">
+              {activeItems.length} Verified Garments
             </span>
           </div>
-          <p className="text-sm text-slate-500 mt-1">
-            Condition scoring, wear frequency, and lifecycle triage extracted directly from real photo metadata.
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+            Deconstructed from your lifestyle photos with fabric, condition scoring, and lifecycle triage.
           </p>
         </div>
 
-        {/* Quick Triage Counts & Add Garment CTA */}
-        <div className="flex items-center space-x-3">
+        {/* Triage Pills & Actions */}
+        <div className="flex items-center space-x-2.5 self-start md:self-auto">
           <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-800 rounded-xl border border-emerald-200 text-xs font-bold">
-            <CheckCircle className="w-4 h-4 text-emerald-600" />
+            <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
             <span>{keepCount} Keep</span>
           </div>
           <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-amber-50 text-amber-800 rounded-xl border border-amber-200 text-xs font-bold">
-            <AlertTriangle className="w-4 h-4 text-amber-600" />
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
             <span>{replaceCount} Replace</span>
-          </div>
-          <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-blue-50 text-blue-800 rounded-xl border border-blue-200 text-xs font-bold">
-            <PlusCircle className="w-4 h-4 text-blue-600" />
-            <span>{addCount} Gaps</span>
           </div>
 
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-sm transition"
+            className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold flex items-center space-x-1 shadow-sm transition"
           >
             <Plus className="w-3.5 h-3.5 text-amber-400" />
-            <span>+ Add Garment</span>
+            <span>+ Add Item</span>
           </button>
         </div>
       </div>
 
-      {/* Filter & Search Toolbar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+      {/* Standardized Toolbar: Search, Filters, & View Toggle */}
+      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         
-        {/* Search & Status Row */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="relative w-full sm:w-80">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Search by fabric, color, or garment..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500"
-            />
-          </div>
+        {/* Search Input */}
+        <div className="relative flex-1 max-w-sm">
+          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            placeholder="Search by fabric, color, or name..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 bg-slate-50/50"
+          />
+        </div>
 
-          {/* Status Filter */}
-          <div className="flex items-center space-x-2 self-start sm:self-auto">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Status:</span>
+        {/* Filter & View Mode Controls */}
+        <div className="flex items-center space-x-2 overflow-x-auto pb-1 sm:pb-0">
+          {/* Status Pills */}
+          <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl">
             {statuses.map((st) => (
               <button
                 key={st}
                 onClick={() => setSelectedStatus(st)}
-                className={`text-xs px-2.5 py-1 rounded-lg font-bold transition ${
+                className={`text-[11px] px-2.5 py-1 rounded-lg font-bold transition ${
                   selectedStatus === st
-                    ? st === 'KEEP' ? 'bg-emerald-600 text-white' : st === 'REPLACE' ? 'bg-amber-600 text-white' : 'bg-slate-900 text-white'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? st === 'KEEP' ? 'bg-emerald-600 text-white' : 'bg-amber-600 text-white'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {st}
               </button>
             ))}
           </div>
-        </div>
 
-        {/* Category Pills */}
-        <div className="flex items-center space-x-2 overflow-x-auto pb-1 border-t border-slate-100 pt-3">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center space-x-1 mr-1">
-            <Filter className="w-3.5 h-3.5" />
-            <span>Category:</span>
-          </span>
-          {categories.map((cat) => (
+          {/* Grid vs List View Mode Toggle */}
+          <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl">
             <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`text-xs px-3 py-1.5 rounded-xl font-medium whitespace-nowrap transition ${
-                selectedCategory === cat
-                  ? 'bg-slate-900 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              onClick={() => setViewMode('grid')}
+              className={`p-1 rounded-lg transition ${
+                viewMode === 'grid' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'
               }`}
+              title="Grid View"
             >
-              {cat}
+              <LayoutGrid className="w-3.5 h-3.5" />
             </button>
-          ))}
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-1 rounded-lg transition ${
+                viewMode === 'list' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'
+              }`}
+              title="List View"
+            >
+              <List className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
 
       </div>
 
-      {/* Item Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredItems.map((item) => {
-          const isKeep = item.status === 'KEEP';
-          const isReplace = item.status === 'REPLACE';
-          const mainPhoto = item.detectedInPhotos[0] || profile.avatar;
+      {/* Category Pills Strip */}
+      <div className="flex items-center space-x-2 overflow-x-auto pb-1">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setSelectedCategory(cat)}
+            className={`text-xs px-3 py-1.5 rounded-xl font-medium whitespace-nowrap transition ${
+              selectedCategory === cat
+                ? 'bg-slate-900 text-white shadow-sm'
+                : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
 
-          return (
-            <div
-              key={item.id}
-              className={`bg-white rounded-3xl border transition-all hover:shadow-lg flex flex-col overflow-hidden ${
-                isReplace ? 'border-amber-300 ring-1 ring-amber-200' : 'border-slate-200'
-              }`}
-            >
-              {/* Card Header Image / Detected Context */}
-              <div className="relative h-56 bg-slate-100 overflow-hidden group">
-                <img
-                  src={mainPhoto}
-                  alt={item.name}
-                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                />
-                
-                {/* Overlay Badges */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-between p-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-black/60 text-white backdrop-blur-md border border-white/20">
+      {/* STANDARDIZED GRID VIEW */}
+      {viewMode === 'grid' && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filteredItems.map((item) => {
+            const isKeep = item.status === 'KEEP';
+            const isReplace = item.status === 'REPLACE';
+            const mainPhoto = item.detectedInPhotos[0] || profile.avatar;
+
+            return (
+              <div
+                key={item.id}
+                className={`bg-white rounded-3xl border transition-all hover:shadow-lg flex flex-col justify-between overflow-hidden group ${
+                  isReplace ? 'border-amber-300 ring-1 ring-amber-200' : 'border-slate-200'
+                }`}
+              >
+                {/* Standardized Image Header with Badges */}
+                <div className="relative h-48 bg-slate-100 overflow-hidden">
+                  <img
+                    src={mainPhoto}
+                    alt={item.name}
+                    className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                  />
+                  
+                  {/* Top Badges */}
+                  <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/60 text-white backdrop-blur-md border border-white/20">
                       {item.category}
                     </span>
 
-                    {/* Status Pill */}
-                    <span className={`text-[11px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-md ${
-                      isKeep 
-                        ? 'bg-emerald-500 text-white' 
-                        : isReplace 
-                          ? 'bg-amber-500 text-white animate-pulse' 
-                          : 'bg-blue-600 text-white'
+                    <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm ${
+                      isKeep ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-white animate-pulse'
                     }`}>
                       {item.status}
                     </span>
                   </div>
 
-                  {/* Condition Metric Pill */}
-                  <div className="flex items-center justify-between text-white">
-                    <div>
-                      <span className="text-[11px] text-slate-300 block">Condition Rating</span>
-                      <div className="flex items-center space-x-1.5">
-                        <span className="text-lg font-bold font-serif">{item.conditionScore}</span>
-                        <span className="text-xs text-slate-300">/ 10</span>
-                        <span className="text-[11px] font-medium text-amber-300 ml-1">({item.conditionLabel})</span>
-                      </div>
+                  {/* Condition Badge Bottom Left */}
+                  <div className="absolute bottom-2.5 left-2.5 bg-black/60 backdrop-blur-md px-2 py-1 rounded-xl text-white flex items-center space-x-1.5 text-[11px] border border-white/20">
+                    <span className="font-bold font-serif">{item.conditionScore}</span>
+                    <span className="text-slate-300 text-[10px]">/ 10</span>
+                    <span className="text-amber-300 text-[10px] font-medium">({item.conditionLabel})</span>
+                  </div>
+
+                  <button
+                    onClick={() => setPreviewPhoto(mainPhoto)}
+                    className="absolute bottom-2.5 right-2.5 p-1.5 rounded-xl bg-white/20 hover:bg-white/30 backdrop-blur-md text-white transition"
+                    title="Inspect Source Photo"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                {/* Standardized Card Body */}
+                <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                  <div>
+                    <div className="flex items-center justify-between text-[11px] text-slate-500">
+                      <span className="font-bold text-rose-600">{item.wardrobeType}</span>
+                      <span className="text-slate-400 font-mono">{item.wearFrequency}</span>
                     </div>
 
-                    <button
-                      onClick={() => setPreviewPhoto(mainPhoto)}
-                      className="p-2 rounded-xl bg-white/20 hover:bg-white/30 backdrop-blur-md text-white transition"
-                      title="Inspect Source Photo"
-                    >
-                      <Eye className="w-4 h-4" />
-                    </button>
+                    <h3 className="font-bold text-sm text-slate-900 mt-1 truncate" title={item.name}>
+                      {item.name}
+                    </h3>
+
+                    {/* Standardized Fabric & Color Badges */}
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      <span className="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md font-medium">
+                        {item.clothType}
+                      </span>
+                      <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md">
+                        {item.color}
+                      </span>
+                    </div>
+
+                    {/* Standardized Diagnostic Note */}
+                    <p className={`mt-2.5 text-[11px] leading-tight p-2.5 rounded-xl ${
+                      isReplace ? 'bg-amber-50 text-amber-900 border border-amber-200' : 'bg-slate-50 text-slate-600 border border-slate-100'
+                    }`}>
+                      {item.statusReason}
+                    </p>
                   </div>
+
+                  {/* Standardized Action Footer */}
+                  <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between">
+                    <div className="flex items-center space-x-1">
+                      <button
+                        onClick={() => onUpdateItemStatus(item.id, isReplace ? 'KEEP' : 'REPLACE')}
+                        className={`text-[10px] font-bold px-2 py-1 rounded-lg border transition ${
+                          isReplace 
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100' 
+                            : 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100'
+                        }`}
+                      >
+                        {isReplace ? 'Mark Kept' : 'Mark Replace'}
+                      </button>
+
+                      <button
+                        onClick={() => onDeleteItem(item.id)}
+                        className="p-1 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition"
+                        title="Archive Item"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    {isReplace ? (
+                      <button
+                        onClick={onSwitchToRecommendations}
+                        className="px-2.5 py-1 bg-gradient-to-r from-amber-500 to-rose-600 text-white rounded-lg text-[11px] font-bold shadow-sm hover:from-amber-600 hover:to-rose-700 transition flex items-center space-x-1"
+                      >
+                        <Sparkles className="w-3 h-3" />
+                        <span>Upgrade</span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={onSwitchToRecommendations}
+                        className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-semibold transition"
+                      >
+                        Pair
+                      </button>
+                    )}
+                  </div>
+
                 </div>
               </div>
+            );
+          })}
+        </div>
+      )}
 
-              {/* Card Body */}
-              <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                <div>
-                  <div className="flex items-center justify-between text-xs text-slate-500">
-                    <span className="font-semibold text-rose-600">{item.wardrobeType}</span>
-                    <span className="font-mono text-slate-400">{item.brandEstimate}</span>
-                  </div>
+      {/* STANDARDIZED COMPACT LIST VIEW */}
+      {viewMode === 'list' && (
+        <div className="bg-white rounded-3xl border border-slate-200 divide-y divide-slate-100 overflow-hidden shadow-sm">
+          {filteredItems.map((item) => {
+            const isKeep = item.status === 'KEEP';
+            const isReplace = item.status === 'REPLACE';
+            const mainPhoto = item.detectedInPhotos[0] || profile.avatar;
 
-                  <h3 className="font-bold text-base text-slate-900 mt-1 line-clamp-1">
-                    {item.name}
-                  </h3>
-
-                  {/* Fabric & Color specification */}
-                  <div className="mt-2.5 space-y-1 text-xs">
-                    <div className="flex items-start space-x-1.5 text-slate-600">
-                      <span className="font-semibold text-slate-700 min-w-[70px]">Fabric:</span>
-                      <span className="text-slate-600">{item.clothType}</span>
+            return (
+              <div key={item.id} className="p-3.5 sm:p-4 hover:bg-slate-50/80 transition flex items-center justify-between gap-4 text-xs">
+                <div className="flex items-center space-x-3.5 min-w-0">
+                  <img
+                    src={mainPhoto}
+                    alt={item.name}
+                    className="w-14 h-14 rounded-xl object-cover border border-slate-200 shrink-0"
+                  />
+                  <div className="min-w-0">
+                    <div className="flex items-center space-x-2">
+                      <span className="font-bold text-slate-900 truncate">{item.name}</span>
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase ${
+                        isKeep ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                      }`}>
+                        {item.status}
+                      </span>
                     </div>
-                    <div className="flex items-start space-x-1.5 text-slate-600">
-                      <span className="font-semibold text-slate-700 min-w-[70px]">Color:</span>
-                      <span className="text-slate-600">{item.color}</span>
-                    </div>
-                    <div className="flex items-start space-x-1.5 text-slate-600">
-                      <span className="font-semibold text-slate-700 min-w-[70px]">Rotation:</span>
-                      <span className="text-slate-600">{item.wearFrequency}</span>
-                    </div>
-                  </div>
-
-                  {/* Logical Audit Reason */}
-                  <div className={`mt-3 p-3 rounded-2xl text-xs ${
-                    isReplace ? 'bg-amber-50 text-amber-900 border border-amber-200' : 'bg-slate-50 text-slate-700 border border-slate-100'
-                  }`}>
-                    <div className="flex items-center space-x-1.5 font-bold mb-1">
-                      {isReplace ? <ShieldAlert className="w-3.5 h-3.5 text-amber-600" /> : <Sparkles className="w-3.5 h-3.5 text-emerald-600" />}
-                      <span>{isReplace ? 'Upgrade Recommendation' : 'Wardrobe Utility Note'}</span>
-                    </div>
-                    <p className="leading-relaxed">{item.statusReason}</p>
-                  </div>
-
-                  {/* Current Active Pairings */}
-                  <div className="mt-3">
-                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                      Current In-Closet Pairings:
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {item.currentPairs && item.currentPairs.map((pair, idx) => (
-                        <span key={idx} className="text-[11px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-lg border border-slate-200">
-                          {pair}
-                        </span>
-                      ))}
+                    <div className="text-[11px] text-slate-500 mt-0.5 truncate">
+                      {item.category} • {item.clothType} • Condition: <strong className="text-slate-800">{item.conditionScore}/10</strong> ({item.conditionLabel})
                     </div>
                   </div>
                 </div>
 
-                {/* Card Action Footer with Functional Status Toggle & Delete */}
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    {/* Toggle Status Button */}
-                    <button
-                      onClick={() => onUpdateItemStatus(item.id, isReplace ? 'KEEP' : 'REPLACE')}
-                      className={`text-[11px] font-bold px-2 py-1 rounded-lg border transition ${
-                        isReplace 
-                          ? 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100' 
-                          : 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100'
-                      }`}
-                      title="Click to toggle Keep / Replace triage"
-                    >
-                      {isReplace ? 'Mark as Kept' : 'Mark to Replace'}
-                    </button>
-
-                    <button
-                      onClick={() => onDeleteItem(item.id)}
-                      className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition"
-                      title="Retire / Archive item from closet"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-
-                  {isReplace ? (
-                    <button
-                      onClick={onSwitchToRecommendations}
-                      className="px-3 py-1.5 bg-gradient-to-r from-amber-500 to-rose-600 text-white rounded-xl text-xs font-bold shadow-md hover:from-amber-600 hover:to-rose-700 transition flex items-center space-x-1"
-                    >
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>View Replacements</span>
-                    </button>
-                  ) : (
-                    <button
-                      onClick={onSwitchToRecommendations}
-                      className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition flex items-center space-x-1"
-                    >
-                      <span>Find Gaps</span>
-                    </button>
-                  )}
+                <div className="flex items-center space-x-2 shrink-0">
+                  <button
+                    onClick={() => onUpdateItemStatus(item.id, isReplace ? 'KEEP' : 'REPLACE')}
+                    className="px-2 py-1 rounded-lg border text-[10px] font-bold bg-slate-50 text-slate-700 hover:bg-slate-100"
+                  >
+                    {isReplace ? 'Keep' : 'Replace'}
+                  </button>
+                  <button
+                    onClick={() => onDeleteItem(item.id)}
+                    className="p-1 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
-
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Modal: Add Custom Garment */}
       {showAddModal && (
@@ -427,7 +451,7 @@ export default function WardrobeAuditor({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Color Palette</label>
+                  <label className="font-bold text-slate-700 block mb-1">Color</label>
                   <input
                     type="text"
                     value={newItemColor}
