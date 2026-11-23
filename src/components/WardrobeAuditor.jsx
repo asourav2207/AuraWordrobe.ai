@@ -275,7 +275,7 @@ export default function WardrobeAuditor({
                 <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                   <div className="space-y-2.5">
                     
-                    {/* Brand Pill & Store Link */}
+                    {/* Brand Pill & Store Product Page Link */}
                     <div className="flex items-center justify-between text-xs">
                       <span className="font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">
                         {brandDisplay}
@@ -286,11 +286,11 @@ export default function WardrobeAuditor({
                           href={item.productUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center space-x-1 text-[11px] font-semibold text-slate-500 hover:text-rose-600 transition"
-                          title="View verified listing on retailer store"
+                          className="inline-flex items-center space-x-1 text-[11px] font-bold text-slate-800 hover:text-rose-600 bg-slate-100 hover:bg-rose-50 px-2 py-0.5 rounded-lg border border-slate-200 transition"
+                          title="Open official retailer product page"
                         >
-                          <span>Store Link</span>
-                          <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-rose-600" />
+                          <span>Product Page</span>
+                          <ExternalLink className="w-3 h-3 text-rose-600" />
                         </a>
                       )}
                     </div>
@@ -441,6 +441,21 @@ export default function WardrobeAuditor({
                       <span className="font-serif font-bold text-slate-900">{priceDisplay}</span>
                       <span className="text-slate-400">•</span>
                       <span className="text-slate-500 font-medium">{item.category}</span>
+                      {item.productUrl && (
+                        <>
+                          <span className="text-slate-400">•</span>
+                          <a
+                            href={item.productUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center space-x-0.5 text-[10px] font-bold text-rose-600 hover:underline"
+                            title="Open retailer product page"
+                          >
+                            <span>Product Page</span>
+                            <ExternalLink className="w-2.5 h-2.5 ml-0.5" />
+                          </a>
+                        </>
+                      )}
                     </div>
 
                     <h4 className="font-bold text-slate-900 text-sm truncate">{item.name}</h4>

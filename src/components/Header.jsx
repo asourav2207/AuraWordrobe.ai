@@ -73,7 +73,7 @@ export default function Header({
               }`}
             >
               <Sparkles className="w-4 h-4 text-amber-500" />
-              <span>Why Buy Gaps</span>
+              <span>Shop for Me</span>
             </button>
 
             <button
@@ -153,7 +153,7 @@ export default function Header({
               activeTab === 'recommendations' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'
             }`}
           >
-            Why Buy
+            Shop for Me
           </button>
           <button
             onClick={() => setActiveTab('trends')}

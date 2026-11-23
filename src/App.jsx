@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Header from './components/Header';
 import ProfileSelector from './components/ProfileSelector';
 import WardrobeAuditor from './components/WardrobeAuditor';
-import DecisionFatigueReducer from './components/DecisionFatigueReducer';
+import ShopForMe from './components/ShopForMe';
 import BrandSizingMatrix from './components/BrandSizingMatrix';
 import InstaTrendCloner from './components/InstaTrendCloner';
 import ThreeDBodyTryOn from './components/ThreeDBodyTryOn';
@@ -222,11 +222,16 @@ export default function App() {
           />
         )}
 
-        {/* Tab 3: Decision Fatigue Reducer & Logical "Why Buy" */}
+        {/* Tab 3: Shop for Me — Tailored Occasion, Budget & Web Crawler Engine */}
         {activeTab === 'recommendations' && (
-          <DecisionFatigueReducer
+          <ShopForMe
             profile={currentProfile}
             onAddToCart={handleAddToCart}
+            onOpenTryOn={(item) => {
+              setActiveTryOnItem(item);
+              setActiveTab('tryon');
+              showToast(`Loaded "${item.name}" into 3D Try-On Studio!`);
+            }}
           />
         )}
 

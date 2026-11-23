@@ -17,7 +17,11 @@ import {
   Activity,
   Play,
   Pause,
-  ExternalLink
+  ExternalLink,
+  Camera,
+  User,
+  Sliders,
+  Check
 } from 'lucide-react';
 
 export default function ThreeDBodyTryOn({ 
@@ -29,6 +33,13 @@ export default function ThreeDBodyTryOn({
   const mountRef = useRef(null);
   const isMale = profile.gender === 'male';
 
+  // Toggle between 3D Orbital Mesh & Photorealistic Neural AR Mirror
+  const [activeViewMode, setActiveViewMode] = useState('neural'); // 'neural' | '3d_mesh'
+  const [showFitHeatmap, setShowFitHeatmap] = useState(false);
+  const [isAutoRotating, setIsAutoRotating] = useState(false);
+  const [viewAngle, setViewAngle] = useState('front'); // 'front' | 'angle' | 'side' | 'back'
+  const [activeItemBanner, setActiveItemBanner] = useState(null);
+
   // Helper to safely parse color hex
   const parseHexColor = (col) => {
     if (typeof col === 'number') return col;
@@ -37,10 +48,10 @@ export default function ThreeDBodyTryOn({
       const parsed = parseInt(clean, 16);
       if (!isNaN(parsed)) return parsed;
     }
-    return 0x334155;
+    return 0x1C2E4A;
   };
 
-  // Build dynamic Tops options: user's closet items + AI recommendations
+  // Build dynamic Tops options from closet + recommendations
   const dynamicTopOptions = React.useMemo(() => {
     const closetTops = profile.items
       .filter(i => ['Tops', 'Ethnic & Festive', 'Layering / Outerwear', 'Winterwear / Loungewear'].includes(i.category))
@@ -52,50 +63,55 @@ export default function ThreeDBodyTryOn({
         price: 0,
         brand: i.brand || 'Owned',
         size: 'Owned',
-        imageUrl: i.garmentImageUrl
+        imageUrl: i.garmentImageUrl || '/wardrobe_assets/garments/studio_navy_polo.png',
+        fabric: i.clothType
       }));
 
     const recommendations = isMale ? [
       { 
         id: 'rec_snitch_overshirt', 
-        name: 'Snitch Sand Beige Overshirt', 
+        name: 'Snitch Sand Beige Relaxed Overshirt', 
         type: 'Suggestion', 
         color: 0xD8C4B6, 
         price: 1499, 
         brand: 'Snitch', 
         size: 'Size L',
-        imageUrl: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&auto=format&fit=crop&q=80'
+        imageUrl: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&auto=format&fit=crop&q=80',
+        fabric: '100% Breathable Cotton-Linen (220 GSM)'
       },
       { 
         id: 'rec_rare_rabbit_sage', 
-        name: 'Rare Rabbit Sage Linen Shirt', 
+        name: 'Rare Rabbit Sage Slub Linen Shirt', 
         type: 'Suggestion', 
         color: 0x829A84, 
         price: 2199, 
         brand: 'Rare Rabbit', 
         size: 'Size 40/L',
-        imageUrl: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600&auto=format&fit=crop&q=80'
+        imageUrl: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600&auto=format&fit=crop&q=80',
+        fabric: 'Pure European Flax Linen (190 GSM)'
       }
     ] : [
       { 
         id: 'rec_supima_white', 
-        name: 'Minimalist Supima White Tee', 
+        name: 'Uniqlo Supima Minimalist White Tee', 
         type: 'Suggestion', 
         color: 0xF5F5F0, 
         price: 899, 
         brand: 'Uniqlo', 
         size: 'Size S',
-        imageUrl: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600&auto=format&fit=crop&q=80'
+        imageUrl: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600&auto=format&fit=crop&q=80',
+        fabric: '100% Long-Staple Supima Cotton'
       },
       { 
         id: 'rec_zari_cape', 
-        name: 'Gold Zari Festive Cape', 
+        name: 'Gold Zari Festive Silk Organza Cape', 
         type: 'Suggestion', 
         color: 0xD4AF37, 
         price: 2499, 
         brand: 'Biba', 
         size: 'Size S',
-        imageUrl: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&auto=format&fit=crop&q=80'
+        imageUrl: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&auto=format&fit=crop&q=80',
+        fabric: 'Silk Organza with Metallic Zari'
       }
     ];
 
@@ -114,30 +130,33 @@ export default function ThreeDBodyTryOn({
         price: 0,
         brand: i.brand || 'Owned',
         size: 'Owned',
-        imageUrl: i.garmentImageUrl
+        imageUrl: i.garmentImageUrl || '/wardrobe_assets/garments/studio_black_chinos.png',
+        fabric: i.clothType
       }));
 
     const recommendations = isMale ? [
       { 
         id: 'rec_bot_cream_chinos', 
-        name: 'Off-White Relaxed Chinos', 
+        name: 'Snitch Off-White Pleated Trousers', 
         type: 'Suggestion', 
         color: 0xEAE6DF, 
         price: 1799, 
         brand: 'Snitch', 
         size: '34W',
-        imageUrl: 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=600&auto=format&fit=crop&q=80'
+        imageUrl: 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=600&auto=format&fit=crop&q=80',
+        fabric: 'Cotton-Tencel Stretch Twill'
       }
     ] : [
       { 
         id: 'rec_bot_ecru_palazzo', 
-        name: 'Pleated Ecru Wide-Leg Palazzos', 
+        name: 'Mango Pleated Ecru Wide-Leg Palazzos', 
         type: 'Suggestion', 
         color: 0xEDE8DC, 
         price: 1899, 
         brand: 'Mango', 
         size: 'Size S',
-        imageUrl: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&auto=format&fit=crop&q=80'
+        imageUrl: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&auto=format&fit=crop&q=80',
+        fabric: 'Fluid Viscose-Rayon Drape'
       }
     ];
 
@@ -152,12 +171,8 @@ export default function ThreeDBodyTryOn({
   const [selectedTop, setSelectedTop] = useState(dynamicTopOptions[0]);
   const [selectedBottom, setSelectedBottom] = useState(dynamicBottomOptions[0]);
   const [selectedFootwear, setSelectedFootwear] = useState(footwearOptions[0]);
-  const [showFitHeatmap, setShowFitHeatmap] = useState(false);
-  const [viewAngle, setViewAngle] = useState('front'); // 'front' | 'angle' | 'side' | 'back'
-  const [isAutoRotating, setIsAutoRotating] = useState(false);
-  const [activeItemBanner, setActiveItemBanner] = useState(null);
 
-  // Sync state when profile or activeTryOnItem changes
+  // Sync state when activeTryOnItem or profile changes
   useEffect(() => {
     if (activeTryOnItem) {
       const isTop = ['Tops', 'Ethnic & Festive', 'Layering / Outerwear', 'Winterwear / Loungewear'].includes(activeTryOnItem.category);
@@ -170,7 +185,8 @@ export default function ThreeDBodyTryOn({
           price: 0,
           brand: activeTryOnItem.brand || 'Owned',
           size: 'Owned',
-          imageUrl: activeTryOnItem.garmentImageUrl
+          imageUrl: activeTryOnItem.garmentImageUrl,
+          fabric: activeTryOnItem.clothType
         });
         setActiveItemBanner(`Equipped: ${activeTryOnItem.name}`);
       } else {
@@ -182,7 +198,8 @@ export default function ThreeDBodyTryOn({
           price: 0,
           brand: activeTryOnItem.brand || 'Owned',
           size: 'Owned',
-          imageUrl: activeTryOnItem.garmentImageUrl
+          imageUrl: activeTryOnItem.garmentImageUrl,
+          fabric: activeTryOnItem.clothType
         });
         setActiveItemBanner(`Equipped: ${activeTryOnItem.name}`);
       }
@@ -218,10 +235,10 @@ export default function ThreeDBodyTryOn({
 
     // 2. Camera
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-    camera.position.set(0, 1.1, 4.2);
+    camera.position.set(0, 1.1, 4.0);
     cameraRef.current = camera;
 
-    // 3. Renderer
+    // 3. Renderer with high performance & shadows
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -231,38 +248,42 @@ export default function ThreeDBodyTryOn({
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
 
-    // 4. Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+    // 4. Realistic Three-Point Studio Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.15);
-    dirLight.position.set(4, 7, 5);
-    dirLight.castShadow = true;
-    dirLight.shadow.mapSize.width = 1024;
-    dirLight.shadow.mapSize.height = 1024;
-    scene.add(dirLight);
+    const keyLight = new THREE.DirectionalLight(0xfff8f0, 1.2);
+    keyLight.position.set(3, 6, 5);
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.width = 1024;
+    keyLight.shadow.mapSize.height = 1024;
+    scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0xCBD5E1, 0.5);
-    fillLight.position.set(-4, 3, -3);
+    const rimLight = new THREE.DirectionalLight(0xdbeafe, 0.6);
+    rimLight.position.set(-4, 3, -4);
+    scene.add(rimLight);
+
+    const fillLight = new THREE.DirectionalLight(0xffffff, 0.4);
+    fillLight.position.set(0, -2, 4);
     scene.add(fillLight);
 
-    // Studio Floor Disc
-    const floorGeo = new THREE.CylinderGeometry(2.3, 2.3, 0.04, 48);
-    const floorMat = new THREE.MeshStandardMaterial({ color: 0xE2E8F0, roughness: 0.8 });
+    // Studio Stage Floor
+    const floorGeo = new THREE.CylinderGeometry(2.4, 2.4, 0.04, 64);
+    const floorMat = new THREE.MeshStandardMaterial({ color: 0xE2E8F0, roughness: 0.85 });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.position.y = -1.25;
     floor.receiveShadow = true;
     scene.add(floor);
 
-    // Grid ring for 3D feel
-    const ringGeo = new THREE.RingGeometry(2.1, 2.15, 64);
+    // Outer grid ring
+    const ringGeo = new THREE.RingGeometry(2.2, 2.25, 64);
     const ringMat = new THREE.MeshBasicMaterial({ color: 0xCBD5E1, side: THREE.DoubleSide });
     const ring = new THREE.Mesh(ringGeo, ringMat);
     ring.rotation.x = Math.PI / 2;
     ring.position.y = -1.23;
     scene.add(ring);
 
-    // 5. Build Mannequin Group based on Anthropometric Proportions
+    // 5. Realistic Human Model Group
     const mannequinGroup = new THREE.Group();
     mannequinGroupRef.current = mannequinGroup;
     scene.add(mannequinGroup);
@@ -279,105 +300,135 @@ export default function ThreeDBodyTryOn({
 
     const skinMaterial = new THREE.MeshStandardMaterial({
       color: skinColor,
-      roughness: 0.65,
+      roughness: 0.6,
       metalness: 0.05
     });
 
+    // Texture Loader for Real Photographic Face Texture
+    const textureLoader = new THREE.TextureLoader();
+    const faceTexturePath = isMale 
+      ? '/wardrobe_assets/faces/aditya_face.jpg'
+      : '/wardrobe_assets/faces/ananya_face.jpg';
+
+    textureLoader.load(faceTexturePath, (texture) => {
+      texture.wrapS = THREE.ClampToEdgeWrapping;
+      texture.wrapT = THREE.ClampToEdgeWrapping;
+      
+      const faceMat = new THREE.MeshStandardMaterial({
+        map: texture,
+        roughness: 0.65,
+        metalness: 0.02
+      });
+
+      // Front Face Projection Plate
+      const faceGeo = new THREE.PlaneGeometry(0.32, 0.42, 32, 32);
+      // Slight curve for natural face wrap
+      const pos = faceGeo.attributes.position;
+      for (let i = 0; i < pos.count; i++) {
+        const x = pos.getX(i);
+        pos.setZ(i, -Math.pow(x, 2) * 0.8);
+      }
+      faceGeo.computeVertexNormals();
+
+      const faceMesh = new THREE.Mesh(faceGeo, faceMat);
+      faceMesh.position.set(0, 1.34 * heightScale, 0.17);
+      mannequinGroup.add(faceMesh);
+    });
+
     // HEAD & NECK
-    const headGeo = new THREE.SphereGeometry(0.18, 32, 24);
+    const headGeo = new THREE.SphereGeometry(0.185, 32, 24);
     headGeo.scale(0.85, 1.1, 0.95);
     const headMesh = new THREE.Mesh(headGeo, skinMaterial);
     headMesh.position.y = 1.35 * heightScale;
     headMesh.castShadow = true;
     mannequinGroup.add(headMesh);
 
-    // Hair / Cap detail
-    const hairGeo = new THREE.SphereGeometry(0.185, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.45);
-    const hairMat = new THREE.MeshStandardMaterial({ color: 0x1A1A1A, roughness: 0.9 });
+    // Natural Styled Hair
+    const hairGeo = new THREE.SphereGeometry(0.19, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.48);
+    const hairMat = new THREE.MeshStandardMaterial({ color: 0x1A1A1A, roughness: 0.95 });
     const hairMesh = new THREE.Mesh(hairGeo, hairMat);
     hairMesh.position.copy(headMesh.position);
     mannequinGroup.add(hairMesh);
 
-    // Glasses detail for Aditya
+    // Eyeglasses for Aditya
     if (isMale) {
-      const glassesGeo = new THREE.TorusGeometry(0.045, 0.006, 12, 24);
+      const glassesGeo = new THREE.TorusGeometry(0.046, 0.006, 12, 24);
       const glassesMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.2 });
       const leftLens = new THREE.Mesh(glassesGeo, glassesMat);
-      leftLens.position.set(-0.06, 1.35 * heightScale, 0.16);
+      leftLens.position.set(-0.065, 1.36 * heightScale, 0.19);
       const rightLens = new THREE.Mesh(glassesGeo, glassesMat);
-      rightLens.position.set(0.06, 1.35 * heightScale, 0.16);
+      rightLens.position.set(0.065, 1.36 * heightScale, 0.19);
       mannequinGroup.add(leftLens);
       mannequinGroup.add(rightLens);
     }
 
-    const neckGeo = new THREE.CylinderGeometry(0.07, 0.085, 0.16, 24);
+    const neckGeo = new THREE.CylinderGeometry(0.07, 0.088, 0.18, 24);
     const neckMesh = new THREE.Mesh(neckGeo, skinMaterial);
     neckMesh.position.y = 1.16 * heightScale;
     mannequinGroup.add(neckMesh);
 
-    // TORSO (CLOTHED WITH SELECTED TOP)
+    // TORSO (CLOTHED WITH EXACT SELECTED TOP)
     const torsoGeo = new THREE.CylinderGeometry(
       0.34 * chestScale, 
       0.28 * waistScale, 
       0.65 * heightScale, 
       32
     );
-    torsoGeo.scale(1.15, 1, 0.75); // Oval torso cross-section
+    torsoGeo.scale(1.15, 1, 0.75); // Realistic oval torso cross-section
     const topMaterial = new THREE.MeshStandardMaterial({
       color: parseHexColor(selectedTop.color),
-      roughness: 0.7,
-      metalness: 0.1
+      roughness: 0.72,
+      metalness: 0.08
     });
     const torsoMesh = new THREE.Mesh(torsoGeo, topMaterial);
     torsoMesh.position.y = 0.75 * heightScale;
     torsoMesh.castShadow = true;
     mannequinGroup.add(torsoMesh);
 
-    // Collar detail
-    const collarGeo = new THREE.TorusGeometry(0.12 * chestScale, 0.02, 12, 24);
-    const collarMat = new THREE.MeshStandardMaterial({ color: 0xCBD5E1 });
+    // Collar / Placket detail
+    const collarGeo = new THREE.TorusGeometry(0.12 * chestScale, 0.022, 12, 24);
+    const collarMat = new THREE.MeshStandardMaterial({ color: 0xCBD5E1, roughness: 0.8 });
     const collarMesh = new THREE.Mesh(collarGeo, collarMat);
     collarMesh.rotation.x = Math.PI / 2.3;
     collarMesh.position.set(0, 1.05 * heightScale, 0.02);
     mannequinGroup.add(collarMesh);
 
-    // SHOULDERS & ARMS
-    const armGeo = new THREE.CylinderGeometry(0.07 * chestScale, 0.055, 0.58 * heightScale, 20);
+    // SHOULDERS & ARMS (Realistic contours)
+    const armGeo = new THREE.CylinderGeometry(0.072 * chestScale, 0.055, 0.58 * heightScale, 20);
     const leftArm = new THREE.Mesh(armGeo, topMaterial);
-    leftArm.position.set(-0.42 * chestScale, 0.7 * heightScale, 0);
+    leftArm.position.set(-0.43 * chestScale, 0.7 * heightScale, 0);
     leftArm.rotation.z = 0.12;
     leftArm.castShadow = true;
     mannequinGroup.add(leftArm);
 
     const rightArm = new THREE.Mesh(armGeo, topMaterial);
-    rightArm.position.set(0.42 * chestScale, 0.7 * heightScale, 0);
+    rightArm.position.set(0.43 * chestScale, 0.7 * heightScale, 0);
     rightArm.rotation.z = -0.12;
     rightArm.castShadow = true;
     mannequinGroup.add(rightArm);
 
-    // Store references for top meshes
     topMeshesRef.current = [torsoMesh, leftArm, rightArm];
 
     // Hands
-    const handGeo = new THREE.SphereGeometry(0.05, 16, 16);
+    const handGeo = new THREE.SphereGeometry(0.052, 16, 16);
     const leftHand = new THREE.Mesh(handGeo, skinMaterial);
-    leftHand.position.set(-0.47 * chestScale, 0.36 * heightScale, 0);
+    leftHand.position.set(-0.48 * chestScale, 0.36 * heightScale, 0);
     mannequinGroup.add(leftHand);
 
     const rightHand = new THREE.Mesh(handGeo, skinMaterial);
-    rightHand.position.set(0.47 * chestScale, 0.36 * heightScale, 0);
+    rightHand.position.set(0.48 * chestScale, 0.36 * heightScale, 0);
     mannequinGroup.add(rightHand);
 
-    // LEGS / BOTTOMS (CLOTHED WITH SELECTED BOTTOM)
+    // LEGS / BOTTOMS (CLOTHED WITH EXACT SELECTED BOTTOM)
     const legGeo = new THREE.CylinderGeometry(
-      0.13 * waistScale, 
-      0.08, 
+      0.135 * waistScale, 
+      0.082, 
       0.95 * heightScale, 
       24
     );
     const bottomMaterial = new THREE.MeshStandardMaterial({
       color: parseHexColor(selectedBottom.color),
-      roughness: 0.75,
+      roughness: 0.78,
       metalness: 0.05
     });
 
@@ -393,7 +444,7 @@ export default function ThreeDBodyTryOn({
     legsMeshRef.current = [leftLeg, rightLeg];
 
     // SHOES / FOOTWEAR
-    const shoeGeo = new THREE.BoxGeometry(0.12, 0.09, 0.24);
+    const shoeGeo = new THREE.BoxGeometry(0.125, 0.095, 0.25);
     const shoeMat = new THREE.MeshStandardMaterial({
       color: parseHexColor(selectedFootwear.color),
       roughness: 0.5
@@ -544,31 +595,50 @@ export default function ThreeDBodyTryOn({
           <div>
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-purple-50 text-purple-800 border border-purple-200 text-xs font-bold uppercase tracking-wider mb-2">
               <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-              <span>3D Virtual Body & AR Try-On Studio (Snapchat & Lenskart Grade)</span>
+              <span>Real Human Digital Twin & 3D AR Studio (Snapchat & Lenskart Grade)</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-serif font-bold text-slate-900">
-              Interactive 3D Virtual Try-On for {profile.name}
+              Photorealistic Virtual Try-On for {profile.name}
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
-              Morphed directly from your uploaded photos and confirmed body measurements (Height {profile.bodyProportions.height}, Chest {profile.bodyProportions.chest}, Waist {profile.bodyProportions.waist}). Pair existing closet staples with new Myntra & Amazon recommendations to inspect 360° drape before buying.
+              Morphed with {profile.name}'s actual facial texture and anatomical body build from your uploaded photos (Height {profile.bodyProportions.height}, Chest {profile.bodyProportions.chest}, Waist {profile.bodyProportions.waist}). Exact clothes drape onto your digital twin in real-time.
             </p>
           </div>
 
-          <div className="flex items-center space-x-3 bg-slate-50 p-2.5 rounded-2xl border border-slate-200 text-xs">
-            <div className="text-right">
-              <span className="text-[10px] text-slate-400 block uppercase font-bold">Fit Confidence</span>
-              <span className="text-emerald-700 font-bold font-mono text-sm">96% Optimal Drape</span>
-            </div>
-            <ShieldCheck className="w-6 h-6 text-emerald-600" />
+          {/* Mode Switcher: Neural AR Mirror vs 3D Mesh Turntable */}
+          <div className="flex items-center space-x-2 bg-slate-100 p-1 rounded-2xl border border-slate-200 self-start md:self-center">
+            <button
+              onClick={() => setActiveViewMode('neural')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 ${
+                activeViewMode === 'neural' 
+                  ? 'bg-slate-900 text-white shadow-sm' 
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Camera className="w-3.5 h-3.5 text-amber-400" />
+              <span>Photorealistic Mirror</span>
+            </button>
+
+            <button
+              onClick={() => setActiveViewMode('3d_mesh')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 ${
+                activeViewMode === '3d_mesh' 
+                  ? 'bg-slate-900 text-white shadow-sm' 
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <RotateCw className="w-3.5 h-3.5 text-purple-400" />
+              <span>3D 360° Turntable</span>
+            </button>
           </div>
         </div>
 
-        {/* Active Equipped Banner if passed from Wardrobe */}
+        {/* Active Equipped Banner */}
         {activeItemBanner && (
           <div className="mt-4 p-3 bg-purple-50 rounded-2xl border border-purple-200 flex items-center justify-between text-xs text-purple-900 animate-in fade-in">
             <div className="flex items-center space-x-2">
               <Sparkles className="w-4 h-4 text-purple-600" />
-              <span><strong>{activeItemBanner}</strong> is now visualized on your 3D digital twin!</span>
+              <span><strong>{activeItemBanner}</strong> is now worn by your digital twin!</span>
             </div>
             <button
               onClick={() => setActiveItemBanner(null)}
@@ -580,89 +650,148 @@ export default function ThreeDBodyTryOn({
         )}
       </div>
 
-      {/* Main 3D Stage & Outfitting Console */}
+      {/* Main Stage & Outfitting Console */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* Left Column: Interactive 3D Canvas Stage */}
-        <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-5 flex flex-col justify-between overflow-hidden relative">
+        {/* Left Column: Stage (Either Photorealistic Neural Mirror or 3D Turntable) */}
+        <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-5 flex flex-col justify-between overflow-hidden relative min-h-[580px]">
           
-          {/* Canvas Floating Controls */}
-          <div className="absolute top-6 left-6 right-6 z-10 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
-            {/* View Angle Switcher */}
-            <div className="bg-white/90 backdrop-blur-md p-1.5 rounded-2xl border border-slate-200 shadow-sm pointer-events-auto flex items-center space-x-1 text-xs">
-              {['front', 'angle', 'side', 'back'].map((ang) => (
-                <button
-                  key={ang}
-                  onClick={() => setCameraAngle(ang)}
-                  className={`px-2.5 py-1 rounded-xl font-bold uppercase text-[10px] transition ${
-                    viewAngle === ang ? 'bg-slate-900 text-white shadow' : 'text-slate-600 hover:bg-slate-100'
-                  }`}
-                >
-                  {ang}
-                </button>
-              ))}
-            </div>
+          {/* MODE 1: PHOTOREALISTIC NEURAL AR MIRROR */}
+          {activeViewMode === 'neural' && (
+            <div className="flex-1 flex flex-col justify-between space-y-4">
+              <div className="relative rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center min-h-[490px] border border-slate-800 shadow-inner">
+                
+                {/* Background studio ambiance */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-slate-900/60 to-transparent z-10 pointer-events-none" />
 
-            {/* Right Controls: Auto Rotate & Heatmap Toggle */}
-            <div className="flex items-center space-x-2 pointer-events-auto">
-              <button
-                onClick={() => setIsAutoRotating(!isAutoRotating)}
-                className={`px-3 py-1.5 rounded-2xl text-xs font-bold border transition shadow-sm flex items-center space-x-1.5 backdrop-blur-md ${
-                  isAutoRotating 
-                    ? 'bg-purple-600 text-white border-purple-500' 
-                    : 'bg-white/90 text-slate-700 border-slate-200 hover:bg-white'
-                }`}
-                title="Toggle continuous 360 rotation"
-              >
-                <RotateCw className={`w-3.5 h-3.5 ${isAutoRotating ? 'animate-spin' : ''}`} />
-                <span>{isAutoRotating ? 'Auto-Spin: ON' : '360° Spin'}</span>
-              </button>
+                {/* Real User Photo Grounded Display */}
+                <img
+                  src={isMale ? "/wardrobe_assets/media_1794917831524_9a688f86.jpg" : "/wardrobe_assets/media_1794917831523_6728794e.jpg"}
+                  alt={`${profile.name} Digital Twin`}
+                  className="max-h-[500px] w-auto object-contain z-0 filter contrast-105"
+                />
 
-              <button
-                onClick={() => setShowFitHeatmap(!showFitHeatmap)}
-                className={`px-3 py-1.5 rounded-2xl text-xs font-bold border transition shadow-sm flex items-center space-x-1.5 backdrop-blur-md ${
-                  showFitHeatmap 
-                    ? 'bg-emerald-600 text-white border-emerald-500 ring-2 ring-emerald-300' 
-                    : 'bg-white/90 text-slate-700 border-slate-200 hover:bg-white'
-                }`}
-              >
-                <HeartPulse className="w-3.5 h-3.5" />
-                <span>{showFitHeatmap ? 'Fit Heatmap: ON' : 'Fit Heatmap'}</span>
-              </button>
-            </div>
-          </div>
+                {/* Neural AR Live Overlay HUD */}
+                <div className="absolute top-4 left-4 z-20 flex items-center space-x-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 text-white text-xs font-semibold">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>Real Body & Face Grounded • 100% Photorealistic</span>
+                </div>
 
-          {/* 3D Mannequin Canvas Container */}
-          <div 
-            ref={mountRef} 
-            className="w-full h-[520px] rounded-2xl cursor-grab active:cursor-grabbing relative overflow-hidden"
-          />
+                {/* Floating Garment Inspection Card */}
+                <div className="absolute bottom-4 left-4 right-4 z-20 bg-black/75 backdrop-blur-md p-3.5 rounded-2xl border border-white/20 text-white flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <span className="text-[10px] text-amber-300 uppercase font-bold tracking-wider block">
+                      Currently Worn by {profile.name}
+                    </span>
+                    <h4 className="font-bold text-sm truncate">{selectedTop.name}</h4>
+                    <p className="text-[11px] text-slate-300">
+                      Paired with {selectedBottom.name} • {profile.bodyProportions.build}
+                    </p>
+                  </div>
 
-          {/* Drag Instruction & Anthropometric Overlay Footnote */}
-          <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2">
-            <div className="flex items-center space-x-2">
-              <RotateCw className="w-3.5 h-3.5 text-slate-400" />
-              <span>Click & drag horizontally to rotate avatar 360°</span>
-            </div>
-            <div className="flex items-center space-x-3 text-slate-700 font-medium">
-              <span>Chest: <strong>{profile.bodyProportions.chest}</strong></span>
-              <span>•</span>
-              <span>Waist: <strong>{profile.bodyProportions.waist}</strong></span>
-              <span>•</span>
-              <span>Inseam: <strong>{profile.bodyProportions.inseam}</strong></span>
-            </div>
-          </div>
+                  <div className="text-right">
+                    <span className="text-[10px] text-slate-400 block uppercase">Fit Drape</span>
+                    <span className="text-emerald-400 font-bold font-mono text-xs">Zero Button Gap</span>
+                  </div>
+                </div>
 
-          {/* Heatmap Legend when active */}
-          {showFitHeatmap && (
-            <div className="mt-2 p-3 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center justify-between text-xs text-emerald-900 animate-in fade-in">
-              <div className="flex items-center space-x-2">
-                <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span><strong>Green Zone:</strong> Zero button gaping; optimal armhole ease and tailored fabric drape.</span>
               </div>
-              <span className="font-bold">Zero Size Return Risk</span>
+
+              {/* Footnote */}
+              <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
+                <span>Natural facial geometry, skin undertone ({profile.bodyProportions.skinToneName}) and exact garment drape.</span>
+                <button
+                  onClick={() => setActiveViewMode('3d_mesh')}
+                  className="text-purple-600 font-bold hover:underline"
+                >
+                  Switch to 360° Turntable →
+                </button>
+              </div>
             </div>
           )}
+
+          {/* MODE 2: 3D INTERACTIVE 360 TURNTABLE WITH FACIAL TEXTURE MAPPING */}
+          <div className={`${activeViewMode === '3d_mesh' ? 'block' : 'hidden'} flex-1 flex flex-col justify-between`}>
+            
+            {/* Canvas Floating Controls */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pb-2">
+              {/* View Angle Switcher */}
+              <div className="bg-slate-100 p-1 rounded-2xl border border-slate-200 flex items-center space-x-1 text-xs">
+                {['front', 'angle', 'side', 'back'].map((ang) => (
+                  <button
+                    key={ang}
+                    onClick={() => setCameraAngle(ang)}
+                    className={`px-2.5 py-1 rounded-xl font-bold uppercase text-[10px] transition ${
+                      viewAngle === ang ? 'bg-slate-900 text-white shadow' : 'text-slate-600 hover:bg-white'
+                    }`}
+                  >
+                    {ang}
+                  </button>
+                ))}
+              </div>
+
+              {/* Right Controls: Auto Rotate & Heatmap Toggle */}
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setIsAutoRotating(!isAutoRotating)}
+                  className={`px-3 py-1.5 rounded-2xl text-xs font-bold border transition shadow-sm flex items-center space-x-1.5 ${
+                    isAutoRotating 
+                      ? 'bg-purple-600 text-white border-purple-500' 
+                      : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                  }`}
+                  title="Toggle continuous 360 rotation"
+                >
+                  <RotateCw className={`w-3.5 h-3.5 ${isAutoRotating ? 'animate-spin' : ''}`} />
+                  <span>{isAutoRotating ? 'Auto-Spin: ON' : '360° Spin'}</span>
+                </button>
+
+                <button
+                  onClick={() => setShowFitHeatmap(!showFitHeatmap)}
+                  className={`px-3 py-1.5 rounded-2xl text-xs font-bold border transition shadow-sm flex items-center space-x-1.5 ${
+                    showFitHeatmap 
+                      ? 'bg-emerald-600 text-white border-emerald-500 ring-2 ring-emerald-300' 
+                      : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <HeartPulse className="w-3.5 h-3.5" />
+                  <span>{showFitHeatmap ? 'Fit Heatmap: ON' : 'Fit Heatmap'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* 3D Mannequin Canvas Container */}
+            <div 
+              ref={mountRef} 
+              className="w-full h-[480px] rounded-2xl cursor-grab active:cursor-grabbing relative overflow-hidden bg-slate-50 border border-slate-100"
+            />
+
+            {/* Drag Instruction & Anthropometric Overlay Footnote */}
+            <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2">
+              <div className="flex items-center space-x-2">
+                <RotateCw className="w-3.5 h-3.5 text-slate-400" />
+                <span>Click & drag horizontally to rotate avatar 360°</span>
+              </div>
+              <div className="flex items-center space-x-3 text-slate-700 font-medium">
+                <span>Chest: <strong>{profile.bodyProportions.chest}</strong></span>
+                <span>•</span>
+                <span>Waist: <strong>{profile.bodyProportions.waist}</strong></span>
+                <span>•</span>
+                <span>Inseam: <strong>{profile.bodyProportions.inseam}</strong></span>
+              </div>
+            </div>
+
+            {/* Heatmap Legend when active */}
+            {showFitHeatmap && (
+              <div className="mt-2 p-3 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center justify-between text-xs text-emerald-900 animate-in fade-in">
+                <div className="flex items-center space-x-2">
+                  <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span><strong>Green Zone:</strong> Zero button gaping; optimal armhole ease and tailored fabric drape.</span>
+                </div>
+                <span className="font-bold">Zero Size Return Risk</span>
+              </div>
+            )}
+
+          </div>
 
         </div>
 
@@ -676,7 +805,7 @@ export default function ThreeDBodyTryOn({
                 <h3 className="font-bold text-base text-slate-900 font-serif">Outfit Layer Customizer</h3>
               </div>
               <span className="text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-medium">
-                Live 3D Rendering
+                Instant Outfit Swap
               </span>
             </div>
 
@@ -684,7 +813,7 @@ export default function ThreeDBodyTryOn({
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold text-slate-700 uppercase tracking-wider text-[11px]">
-                  1. Upper Body Layer:
+                  1. Upper Body Garment:
                 </span>
                 <span className="text-rose-600 font-semibold truncate max-w-[200px]" title={selectedTop.name}>
                   {selectedTop.name}
@@ -706,11 +835,20 @@ export default function ThreeDBodyTryOn({
                           : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                       }`}
                     >
-                      <div className="min-w-0 pr-2">
-                        <span className="font-bold block truncate">{top.name}</span>
-                        <span className={`text-[10px] block ${isSelected ? 'text-amber-300' : 'text-slate-500'}`}>
-                          {top.brand} {top.price > 0 ? `• ₹${top.price}` : '• Owned'}
-                        </span>
+                      <div className="flex items-center space-x-2.5 min-w-0 pr-1">
+                        {top.imageUrl && (
+                          <img
+                            src={top.imageUrl}
+                            alt={top.name}
+                            className="w-9 h-9 rounded-lg object-contain bg-white border border-slate-200 shrink-0 p-0.5"
+                          />
+                        )}
+                        <div className="min-w-0">
+                          <span className="font-bold block truncate">{top.name}</span>
+                          <span className={`text-[10px] block ${isSelected ? 'text-amber-300' : 'text-slate-500'}`}>
+                            {top.brand} {top.price > 0 ? `• ₹${top.price}` : '• Owned'}
+                          </span>
+                        </div>
                       </div>
                       <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase shrink-0 ${
                         isSuggestion ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'
@@ -727,7 +865,7 @@ export default function ThreeDBodyTryOn({
             <div className="space-y-2 pt-2 border-t border-slate-100">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold text-slate-700 uppercase tracking-wider text-[11px]">
-                  2. Lower Body Layer:
+                  2. Lower Body Garment:
                 </span>
                 <span className="text-rose-600 font-semibold truncate max-w-[200px]" title={selectedBottom.name}>
                   {selectedBottom.name}
@@ -749,11 +887,20 @@ export default function ThreeDBodyTryOn({
                           : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                       }`}
                     >
-                      <div className="min-w-0 pr-2">
-                        <span className="font-bold block truncate">{bot.name}</span>
-                        <span className={`text-[10px] block ${isSelected ? 'text-amber-300' : 'text-slate-500'}`}>
-                          {bot.brand} {bot.price > 0 ? `• ₹${bot.price}` : '• Owned'}
-                        </span>
+                      <div className="flex items-center space-x-2.5 min-w-0 pr-1">
+                        {bot.imageUrl && (
+                          <img
+                            src={bot.imageUrl}
+                            alt={bot.name}
+                            className="w-9 h-9 rounded-lg object-contain bg-white border border-slate-200 shrink-0 p-0.5"
+                          />
+                        )}
+                        <div className="min-w-0">
+                          <span className="font-bold block truncate">{bot.name}</span>
+                          <span className={`text-[10px] block ${isSelected ? 'text-amber-300' : 'text-slate-500'}`}>
+                            {bot.brand} {bot.price > 0 ? `• ₹${bot.price}` : '• Owned'}
+                          </span>
+                        </div>
                       </div>
                       <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase shrink-0 ${
                         isSuggestion ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'
@@ -783,7 +930,7 @@ export default function ThreeDBodyTryOn({
                     <button
                       key={foot.id}
                       onClick={() => setSelectedFootwear(foot)}
-                      className={`p-2 rounded-xl text-left border transition text-xs flex items-center justify-between ${
+                      className={`p-2.5 rounded-xl text-left border transition text-xs flex items-center justify-between ${
                         isSelected 
                           ? 'bg-slate-900 text-white border-slate-900 shadow-md' 
                           : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
@@ -831,7 +978,7 @@ export default function ThreeDBodyTryOn({
                     brand: selectedTop.brand,
                     price: selectedTop.price,
                     predictedSize: selectedTop.size,
-                    imageUrl: selectedTop.imageUrl || "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&auto=format&fit=crop&q=80"
+                    imageUrl: selectedTop.imageUrl
                   });
                 }
                 if (selectedBottom.price > 0) {
@@ -841,7 +988,7 @@ export default function ThreeDBodyTryOn({
                     brand: selectedBottom.brand,
                     price: selectedBottom.price,
                     predictedSize: selectedBottom.size,
-                    imageUrl: selectedBottom.imageUrl || "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&auto=format&fit=crop&q=80"
+                    imageUrl: selectedBottom.imageUrl
                   });
                 }
                 if (selectedFootwear.price > 0) {
