@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingBag, Sparkles, Shirt, Camera, Compass, Box, UserCheck } from 'lucide-react';
+import { ShoppingBag, Sparkles, Shirt, Camera, Compass, Box, UserCheck, BookOpen } from 'lucide-react';
 
 export default function Header({ 
   activeTab, 
@@ -103,6 +103,17 @@ export default function Header({
 
           {/* Action CTAs: Scan Photo & Cart */}
           <div className="flex items-center space-x-2 sm:space-x-3">
+            <a
+              href="./docs.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:flex items-center space-x-1.5 px-3 py-2 text-xs font-semibold text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-xl transition shadow-sm"
+              title="Open Executive Dossier & Documentation"
+            >
+              <BookOpen className="w-4 h-4 text-amber-700" />
+              <span>📖 Executive Dossier</span>
+            </a>
+
             <button
               onClick={onOpenScanModal}
               className="hidden sm:flex items-center space-x-2 text-xs font-semibold px-3 py-2 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition shadow-sm"
@@ -171,6 +182,14 @@ export default function Header({
           >
             Sizing
           </button>
+          <a
+            href="./docs.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-100 text-amber-900 border border-amber-300 flex items-center space-x-1"
+          >
+            <span>📖 Docs</span>
+          </a>
         </div>
 
       </div>

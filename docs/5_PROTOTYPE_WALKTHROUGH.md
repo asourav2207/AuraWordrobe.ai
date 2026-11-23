@@ -31,23 +31,36 @@ npm run dev
   - Switch to the **"Cloth Size Guessed in Photos"** view at the top right:
   - Shows the AI's tension & fold analysis of the actual clothes worn in the uploaded photos (e.g. Navy Polo in Photo #3 guessed as *Size L in Snitch / Size M in Zara* at 94% confidence).
 
-### Feature 3: Interactive 3D Virtual Body & AR Try-On Studio (Snapchat & Lenskart Grade)
+### Feature 3: Interactive 3D Virtual Body & Neural Try-On Studio (Photorealistic Digital Twin)
 - Click the **"3D Virtual Try-On"** tab (with the purple 3D badge).
-- **Interactive 3D Mannequin:**
-  - An anatomical 3D avatar rendered with Three.js that automatically morphs to the user's height, chest, waist, shoulder width, and skin tone.
-  - **Orbit Controls:** Click and drag horizontally with your mouse or finger to **rotate the avatar 360°**.
-  - **View Presets:** Click **Front**, **Angle (45°)**, **Side**, or **Back** to instantly snap the camera.
-  - **Fit Heatmap Mode:** Click **"Fit Heatmap: ON"** to see fabric strain and drape tension in real-time (Green = optimal drape, Amber = snug chest, Blue = relaxed ease).
-- **Populate with Existing Closet + New Suggestions:**
-  - In the right-hand panel, mix and match **Upper Body** items (e.g., try the *Snitch Sand Beige Overshirt* or the existing *Navy Pique Polo*), **Lower Body** items (*Black Chinos* vs. *Blue Denim*), and **Footwear** (*Tan Kolhapuris* vs. *White Sneakers*).
-  - Watch the 3D avatar update its fabrics and colors instantly!
-  - Click **"Add Visualized 3D Outfit to Cart"** to stage the complete outfit bundle into your cart with one click!
+- **Two Rendering Engines Available:**
+  1. **Photorealistic Mirror:** Shows a 100% photo-grounded digital twin of the user (extracted from real lifestyle photos), avoiding the cartoonish uncanny-valley effect while previewing selected garments.
+  2. **3D Turntable (Three.js):** Full 360° interactive turntable with the user's authentic face mapped onto an anatomically proportioned head mesh.
+- **Controls & Interaction:**
+  - **Orbit Controls:** Click and drag with mouse or touch to rotate 360°.
+  - **View Presets:** Instant camera snap to **Front**, **Angle (45°)**, **Side**, or **Back**.
+  - **Fit Heatmap Mode:** Toggle on to inspect fabric drape and ease allowances across the torso and hips.
+- **Outfit Equipping & Synergy:**
+  - Select items from the **Owned Closet** or **Recommended Gap-Fillers**.
+  - Click **"Add Visualized 3D Outfit to Cart"** to stage the complete outfit into the checkout drawer with 1-click bundle savings.
 
-### Feature 4: Standardized & De-duplicated Wardrobe Cards
+### Feature 4: "Shop for Me" Smart Concierge (Anti-Decision Fatigue)
+- Click the **"Shop for Me"** tab.
+- **Interactive Controls:**
+  - Select an occasion (e.g., *Diwali / Temple Puja*, *Cocktail / Weekend Dining*, *Client Presentation*, or custom text).
+  - Adjust the budget slider from ₹1,000 to ₹15,000.
+  - Enter custom styling intent (e.g. *"I want an ethnic look that pairs with my existing black chinos"*).
+- **Closet Synergy Calculation:**
+  - Highlights owned wardrobe pieces that can be reused at **₹0 spend**, eliminating redundant spending.
+- **Strategic Gap Fillers:**
+  - Displays high-conviction, scrollable suggestion cards with direct canonical merchant links to Snitch, Myntra, and FabIndia.
+
+### Feature 5: Isolated Studio Garment Wardrobe Cards
 - Click the **"Wardrobe"** tab.
-- Notice the streamlined, production-grade card layout (standardized 48-height image banner, compact badges, uniform metadata, and concise status diagnostics).
-- **View Mode Switcher:** Toggle between **"Grid View"** (3-column visual cards) and **"Compact List View"** (sleek row view for rapid inventory auditing).
-- **Interactive Triage:** Click **"Mark Replace"** or **"Mark Kept"** to update wardrobe health scores in real time.
+- **Isolated Studio Flat-Lays:** Every card displays a clean, studio-photographed garment on a pure white background matching the user's real clothes.
+- **Direct Merchant Links:** Click **"Product Page"** to open the real canonical product listing.
+- **Inspection Lightbox:** Click **"📸 Worn in Photo"** to open a lightbox showing the authentic lifestyle photo of the user wearing that exact piece.
+- **Instant 3D Try-On:** Click **"🎽 3D Try On"** to immediately teleport that garment into the 3D studio.
 
 ---
 

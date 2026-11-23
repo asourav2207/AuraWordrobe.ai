@@ -47,6 +47,31 @@
 
 ---
 
+### Prompt 6: Phase 4 Studio Garment Isolation & High-Fidelity Flat-Lays
+```text
+"Inspect the clothes worn by the subjects in the uploaded photos:
+1. Navy blue polo with heather grey collar and white tipping
+2. Pink and cobalt blue buffalo check hooded shirt
+3. Deep indigo slub linen mandarin bandhgala kurta
+4. Dusty rose longline shrug cardigan with red embroidered rose patch on left chest
+5. Slate blue fuzzy sherpa boucle fleece sweater
+Generate isolated, studio-quality catalog flat-lay photographs on a pure white (#FFFFFF) background, perfectly folded or laid flat as seen on luxury e-commerce sites (Net-a-Porter, Mr Porter, Myntra Luxe), with natural soft contact shadows and no human model or hanger."
+```
+- **Why written this way:** Eliminates messy background distractions from casual smartphone photos. Users expect clean, isolated product cards when browsing apparel, and these studio flat-lays elevate the perceived trust and aesthetic finish of the wardrobe auditor.
+
+---
+
+### Prompt 7: Phase 4 Photorealistic Neural Mirror & Facial Texture Mapping
+```text
+"Design an interactive 3D virtual try-on studio that eliminates the cartoonish aesthetic of standard WebGL mannequins:
+1. Crop and extract high-resolution facial textures from the user's uploaded portrait photos.
+2. In Three.js, map the user's facial texture onto a curved frontal head geometry with smooth material blending and realistic skin tone matching.
+3. Build a dual-mode interface: a 360° interactive turntable with orbit controls and fit tension heatmaps, plus a 'Photorealistic Mirror' mode that presents an authentic, photographic digital twin of the user wearing both owned clothes and recommended new pieces."
+```
+- **Why written this way:** Solves the #1 complaint in virtual try-ons—uncanny valley cartoon avatars. By anchoring the head and face in the user's authentic facial pixels while dynamically draping the selected clothes, user confidence increases dramatically.
+
+---
+
 ## 2. The Failed Prompt & What Was Changed
 
 ### The Failed Prompt:

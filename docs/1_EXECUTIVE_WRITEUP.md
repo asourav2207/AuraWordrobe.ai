@@ -3,8 +3,10 @@
 
 **Target Segment:** Urban Young Working Professionals & Couples (Ages 23–30) in Tier-1 Indian Metros  
 **Category:** Fashion E-Commerce, Wardrobe Intelligence & Anthropometric Sizing  
-**Prototype Link:** [http://localhost:5173/](http://localhost:5173/)  
-**Repository Path:** `/Users/adityasourav/Downloads/FashionCommerce`  
+**Live Prototype (GitHub Pages):** [https://asourav2207.github.io/AuraWordrobe.ai/](https://asourav2207.github.io/AuraWordrobe.ai/)  
+**Interactive Dossier & Docs:** [https://asourav2207.github.io/AuraWordrobe.ai/docs.html](https://asourav2207.github.io/AuraWordrobe.ai/docs.html)  
+**Local Host:** [http://localhost:5173/](http://localhost:5173/)  
+**GitHub Repository:** [https://github.com/asourav2207/AuraWordrobe.ai](https://github.com/asourav2207/AuraWordrobe.ai)  
 
 ---
 
@@ -89,24 +91,34 @@ graph TD
 - **Pros:** Unlocks latent closet wealth, circular fashion sustainability narrative.
 - **Cons:** Heavy reverse logistics, complex grading/fraud challenges, high capital intensity for warehouse inspection.
 
-#### Why We Chose Bet 2 and What We Ruthlessly Cut for MVP:
-We chose **Bet 2 (AI-Led)** because it solves the core psychological driver (decision fatigue & fit anxiety) with software margins and zero inventory liability.
-- **What We Cut from MVP:**
-  1. *Real-Time 3D Avatar Try-On:* Cut because mobile WebGL rendering produces uncanny-valley fabric draping that increases user skepticism rather than resolving it.
-  2. *Unified Multi-Store Single-Page Checkout:* Cut because building headless checkout across Myntra, Amazon, and Ajio involves brittle reverse-engineered APIs. Instead, we generate pre-sized deep links and a unified cart staging interface.
-  3. *Physical Garment Tag Barcode Scanning:* Cut because >70% of Indian users cut off scratchy wash-care tags immediately after purchase. Ambient camera vision is far more natural.
+#### Evolution from Initial MVP to Phase 4 Architecture:
+We initially scoped Bet 2 to focus on rapid editorial UX. However, user testing highlighted that generic 3D mannequins felt "cartoonish" and generic search URLs created drop-off. In Phase 4, we engineered definitive breakthroughs to resolve these pain points:
+
+1. **Overcoming Uncanny Valley via Dual-Engine Try-On:**
+   - Rather than cartoonish avatars, we implemented a **Photorealistic Neural Mirror** alongside a **Three.js 360° Turntable**.
+   - Facial textures extracted directly from user photos (`aditya_face.jpg`, `ananya_face.jpg`) are mapped onto an anatomically proportioned mesh.
+   - Users can equip both owned closet items and recommended gap-fillers with live fit tension heatmaps.
+2. **Exact Studio Garment Flat-Lays & Canonical Product URLs:**
+   - Replaced noisy in-photo crops with 11 studio-quality flat-lay assets on pure white backgrounds (`studio_navy_polo.png`, `studio_pink_check.png`, `studio_ananya_shrug.png`, etc.).
+   - Card links point to canonical product pages (Snitch, Myntra, FabIndia, Amazon) rather than generic keyword queries.
+3. **"Shop for Me" Intelligence Engine:**
+   - Evolved "Why Buy" into a goal-driven shopping concierge with occasion presets, budget controls (₹1,000–₹15,000), and free-text styling intent prompts.
+   - Computes **Closet Synergy Savings** (showing how many owned pieces are reused at ₹0 spend) alongside strictly justified gap-filler additions.
 
 ---
 
 ### Step 5: The Working Prototype
-- **Live URL:** [http://localhost:5173/](http://localhost:5173/)
+- **Production URL:** [https://asourav2207.github.io/AuraWordrobe.ai/](https://asourav2207.github.io/AuraWordrobe.ai/)
+- **Documentation Dashboard:** [https://asourav2207.github.io/AuraWordrobe.ai/docs.html](https://asourav2207.github.io/AuraWordrobe.ai/docs.html)
+- **Local Dev Server:** [http://localhost:5173/](http://localhost:5173/)
 - **Core Tested Capabilities:**
-  1. Multi-subject vision segregation (Aditya vs. Ananya) from uploaded real-world lifestyle photos.
-  2. Interactive wardrobe health audit with condition scoring (1–10) and Keep/Replace/Add triage.
-  3. Anti-decision fatigue "Why Buy" gap analysis with live links to Myntra, Amazon, and Flipkart.
-  4. Cross-brand Indian sizing matrix (Snitch vs. Rare Rabbit vs. Zara vs. Levi's vs. FabIndia).
-  5. Viral Instagram look cloner with 1-click bundle discount.
-  6. Dynamic cart artefact pairing engine (matching footwear and accessories without keyword search).
+  1. **Multi-Subject Vision Segregation:** Automatically categorizes uploaded lifestyle photos between Aditya (Male) and Ananya (Female).
+  2. **Standardized Studio Wardrobe Auditor:** Clean flat-lay garment tiles, condition scoring (1–10), "📸 Worn in Photo" inspection modal, and 1-click "🎽 3D Try On".
+  3. **3D Virtual Body & Neural Try-On Studio:** Three.js 360° turntable with orbit controls, photographic digital twin, real face texture mapping, tension heatmap, and 1-click outfit staging.
+  4. **"Shop for Me" Smart Concierge:** Occasion filter, budget thresholding, closet synergy savings (₹0 reuse calculation), and scrollable buy tiles with direct canonical links.
+  5. **Biometric Anthropometric Sizing Engine:** 10+ body proportion parameters (Height, Chest, Waist, Inseam, Neck, BMI, Skin Tone) auto-detected, editable, and cross-mapped to Snitch, Rare Rabbit, Zara, Levi's, and FabIndia.
+  6. **Reel Cloner with Direct Link Input:** Accepts Instagram Reel and YouTube Short URLs, features 1-click popular fashion creator presets, and provides instant look deconstruction.
+  7. **Dynamic Cart & Artefact Pairing:** Automatically pairs ordered apparel with matching footwear and accessories (e.g., Tan Mojaris, Brass Watches) without keyword searching.
 
 ---
 
