@@ -9,59 +9,197 @@ import {
   Eye, 
   ShieldCheck, 
   Maximize2,
-  Maximize,
   Compass,
   Flame,
   Info,
-  Ruler
+  Ruler,
+  HeartPulse,
+  Activity,
+  Play,
+  Pause,
+  ExternalLink
 } from 'lucide-react';
 
-export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCart }) {
+export default function ThreeDBodyTryOn({ 
+  profile, 
+  activeTryOnItem, 
+  onAddToCart, 
+  onAddBundleToCart 
+}) {
   const mountRef = useRef(null);
   const isMale = profile.gender === 'male';
 
-  // Clothing options available to try on
-  const topOptions = isMale ? [
-    { id: 'top_overshirt', name: 'Snitch Sand Beige Overshirt', type: 'Suggestion', color: 0xD8C4B6, price: 1499, brand: 'Snitch', size: 'Size L' },
-    { id: 'top_linen_sage', name: 'Rare Rabbit Sage Linen Shirt', type: 'Suggestion', color: 0x829A84, price: 2199, brand: 'Rare Rabbit', size: 'Size 40/L' },
-    { id: 'top_navy_polo', name: 'Structured Navy Pique Polo', type: 'In Closet', color: 0x1C2E4A, price: 0, brand: 'Closet Item #1', size: 'Owned' },
-    { id: 'top_indigo_kurta', name: 'Indigo Slub Linen Short Kurta', type: 'In Closet', color: 0x182848, price: 0, brand: 'Closet Item #4', size: 'Owned' },
-    { id: 'top_camo_polo', name: 'Abstract Marble Camo Polo', type: 'In Closet', color: 0x4A5568, price: 0, brand: 'Closet Item #3', size: 'Owned' }
-  ] : [
-    { id: 'top_supima_white', name: 'Minimalist Supima White Tee', type: 'Suggestion', color: 0xF5F5F0, price: 899, brand: 'Uniqlo', size: 'Size S' },
-    { id: 'top_floral_jacket', name: 'Kashmiri Embroidered Crop Shrug', type: 'In Closet', color: 0x1A1A1A, price: 0, brand: 'Closet Item #4', size: 'Owned' },
-    { id: 'top_rose_shrug', name: 'Dusty Rose Fluid Longline Shrug', type: 'In Closet', color: 0xD48B88, price: 0, brand: 'Closet Item #1', size: 'Owned' },
-    { id: 'top_fleece_blue', name: 'Slate Blue Boucle Fleece Pullover', type: 'In Closet', color: 0x6888A2, price: 0, brand: 'Closet Item #5', size: 'Owned' }
-  ];
+  // Helper to safely parse color hex
+  const parseHexColor = (col) => {
+    if (typeof col === 'number') return col;
+    if (typeof col === 'string') {
+      const clean = col.replace('#', '').replace('0x', '');
+      const parsed = parseInt(clean, 16);
+      if (!isNaN(parsed)) return parsed;
+    }
+    return 0x334155;
+  };
 
-  const bottomOptions = isMale ? [
-    { id: 'bot_black_chinos', name: 'Jet Black Tapered Chinos', type: 'In Closet', color: 0x151515, price: 0, brand: 'Closet Item #6', size: 'Owned' },
-    { id: 'bot_blue_denim', name: 'Medium-Wash Straight Denim', type: 'In Closet', color: 0x3B597B, price: 0, brand: 'Closet Item #5', size: 'Owned' },
-    { id: 'bot_cream_chinos', name: 'Off-White Relaxed Chinos', type: 'Suggestion', color: 0xEAE6DF, price: 1799, brand: 'Snitch', size: '34W' }
-  ] : [
-    { id: 'bot_ecru_palazzo', name: 'Pleated Ecru Wide-Leg Palazzos', type: 'Suggestion', color: 0xEDE8DC, price: 1899, brand: 'Mango', size: 'Size S' },
-    { id: 'bot_black_pants', name: 'Black Tailored High-Rise Pants', type: 'In Closet', color: 0x151515, price: 0, brand: 'Closet Item #3', size: 'Owned' }
-  ];
+  // Build dynamic Tops options: user's closet items + AI recommendations
+  const dynamicTopOptions = React.useMemo(() => {
+    const closetTops = profile.items
+      .filter(i => ['Tops', 'Ethnic & Festive', 'Layering / Outerwear', 'Winterwear / Loungewear'].includes(i.category))
+      .map(i => ({
+        id: i.id,
+        name: i.name,
+        type: 'In Closet',
+        color: parseHexColor(i.colorHex),
+        price: 0,
+        brand: i.brand || 'Owned',
+        size: 'Owned',
+        imageUrl: i.garmentImageUrl
+      }));
+
+    const recommendations = isMale ? [
+      { 
+        id: 'rec_snitch_overshirt', 
+        name: 'Snitch Sand Beige Overshirt', 
+        type: 'Suggestion', 
+        color: 0xD8C4B6, 
+        price: 1499, 
+        brand: 'Snitch', 
+        size: 'Size L',
+        imageUrl: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&auto=format&fit=crop&q=80'
+      },
+      { 
+        id: 'rec_rare_rabbit_sage', 
+        name: 'Rare Rabbit Sage Linen Shirt', 
+        type: 'Suggestion', 
+        color: 0x829A84, 
+        price: 2199, 
+        brand: 'Rare Rabbit', 
+        size: 'Size 40/L',
+        imageUrl: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600&auto=format&fit=crop&q=80'
+      }
+    ] : [
+      { 
+        id: 'rec_supima_white', 
+        name: 'Minimalist Supima White Tee', 
+        type: 'Suggestion', 
+        color: 0xF5F5F0, 
+        price: 899, 
+        brand: 'Uniqlo', 
+        size: 'Size S',
+        imageUrl: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600&auto=format&fit=crop&q=80'
+      },
+      { 
+        id: 'rec_zari_cape', 
+        name: 'Gold Zari Festive Cape', 
+        type: 'Suggestion', 
+        color: 0xD4AF37, 
+        price: 2499, 
+        brand: 'Biba', 
+        size: 'Size S',
+        imageUrl: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&auto=format&fit=crop&q=80'
+      }
+    ];
+
+    return [...closetTops, ...recommendations];
+  }, [profile, isMale]);
+
+  // Build dynamic Bottoms options
+  const dynamicBottomOptions = React.useMemo(() => {
+    const closetBottoms = profile.items
+      .filter(i => ['Bottoms'].includes(i.category))
+      .map(i => ({
+        id: i.id,
+        name: i.name,
+        type: 'In Closet',
+        color: parseHexColor(i.colorHex),
+        price: 0,
+        brand: i.brand || 'Owned',
+        size: 'Owned',
+        imageUrl: i.garmentImageUrl
+      }));
+
+    const recommendations = isMale ? [
+      { 
+        id: 'rec_bot_cream_chinos', 
+        name: 'Off-White Relaxed Chinos', 
+        type: 'Suggestion', 
+        color: 0xEAE6DF, 
+        price: 1799, 
+        brand: 'Snitch', 
+        size: '34W',
+        imageUrl: 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=600&auto=format&fit=crop&q=80'
+      }
+    ] : [
+      { 
+        id: 'rec_bot_ecru_palazzo', 
+        name: 'Pleated Ecru Wide-Leg Palazzos', 
+        type: 'Suggestion', 
+        color: 0xEDE8DC, 
+        price: 1899, 
+        brand: 'Mango', 
+        size: 'Size S',
+        imageUrl: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&auto=format&fit=crop&q=80'
+      }
+    ];
+
+    return [...closetBottoms, ...recommendations];
+  }, [profile, isMale]);
 
   const footwearOptions = [
     { id: 'foot_kolhapuri', name: 'Tan Leather Padded Kolhapuris', color: 0xA0522D, price: 1499, brand: 'Metro' },
     { id: 'foot_sneakers', name: 'Clean White Leather Low-Tops', color: 0xF8F9FA, price: 2499, brand: 'Puma' }
   ];
 
-  const [selectedTop, setSelectedTop] = useState(topOptions[0]);
-  const [selectedBottom, setSelectedBottom] = useState(bottomOptions[0]);
+  const [selectedTop, setSelectedTop] = useState(dynamicTopOptions[0]);
+  const [selectedBottom, setSelectedBottom] = useState(dynamicBottomOptions[0]);
   const [selectedFootwear, setSelectedFootwear] = useState(footwearOptions[0]);
   const [showFitHeatmap, setShowFitHeatmap] = useState(false);
   const [viewAngle, setViewAngle] = useState('front'); // 'front' | 'angle' | 'side' | 'back'
+  const [isAutoRotating, setIsAutoRotating] = useState(false);
+  const [activeItemBanner, setActiveItemBanner] = useState(null);
+
+  // Sync state when profile or activeTryOnItem changes
+  useEffect(() => {
+    if (activeTryOnItem) {
+      const isTop = ['Tops', 'Ethnic & Festive', 'Layering / Outerwear', 'Winterwear / Loungewear'].includes(activeTryOnItem.category);
+      if (isTop) {
+        setSelectedTop({
+          id: activeTryOnItem.id,
+          name: activeTryOnItem.name,
+          type: 'In Closet',
+          color: parseHexColor(activeTryOnItem.colorHex),
+          price: 0,
+          brand: activeTryOnItem.brand || 'Owned',
+          size: 'Owned',
+          imageUrl: activeTryOnItem.garmentImageUrl
+        });
+        setActiveItemBanner(`Equipped: ${activeTryOnItem.name}`);
+      } else {
+        setSelectedBottom({
+          id: activeTryOnItem.id,
+          name: activeTryOnItem.name,
+          type: 'In Closet',
+          color: parseHexColor(activeTryOnItem.colorHex),
+          price: 0,
+          brand: activeTryOnItem.brand || 'Owned',
+          size: 'Owned',
+          imageUrl: activeTryOnItem.garmentImageUrl
+        });
+        setActiveItemBanner(`Equipped: ${activeTryOnItem.name}`);
+      }
+    } else {
+      setSelectedTop(dynamicTopOptions[0]);
+      setSelectedBottom(dynamicBottomOptions[0]);
+    }
+  }, [activeTryOnItem, profile.id, dynamicTopOptions, dynamicBottomOptions]);
 
   // Three.js scene references
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
   const rendererRef = useRef(null);
   const mannequinGroupRef = useRef(null);
-  const torsoMeshRef = useRef(null);
-  const legsMeshRef = useRef(null);
-  const shoesMeshRef = useRef(null);
+  const topMeshesRef = useRef([]);
+  const legsMeshRef = useRef([]);
+  const shoesMeshRef = useRef([]);
   const isDraggingRef = useRef(false);
   const previousMousePositionRef = useRef({ x: 0, y: 0 });
 
@@ -70,12 +208,12 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
     const container = mountRef.current;
     if (!container) return;
 
-    const width = container.clientWidth;
-    const height = container.clientHeight || 520;
+    const width = container.clientWidth > 50 ? container.clientWidth : 550;
+    const height = container.clientHeight > 50 ? container.clientHeight : 520;
 
     // 1. Scene
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xF1F5F9);
+    scene.background = new THREE.Color(0xF8FAFC);
     sceneRef.current = scene;
 
     // 2. Camera
@@ -84,7 +222,7 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
     cameraRef.current = camera;
 
     // 3. Renderer
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
@@ -94,22 +232,22 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
     container.appendChild(renderer.domElement);
 
     // 4. Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.1);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.15);
     dirLight.position.set(4, 7, 5);
     dirLight.castShadow = true;
     dirLight.shadow.mapSize.width = 1024;
     dirLight.shadow.mapSize.height = 1024;
     scene.add(dirLight);
 
-    const fillLight = new THREE.DirectionalLight(0xE2E8F0, 0.5);
+    const fillLight = new THREE.DirectionalLight(0xCBD5E1, 0.5);
     fillLight.position.set(-4, 3, -3);
     scene.add(fillLight);
 
     // Studio Floor Disc
-    const floorGeo = new THREE.CylinderGeometry(2.2, 2.2, 0.04, 48);
+    const floorGeo = new THREE.CylinderGeometry(2.3, 2.3, 0.04, 48);
     const floorMat = new THREE.MeshStandardMaterial({ color: 0xE2E8F0, roughness: 0.8 });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.position.y = -1.25;
@@ -130,10 +268,14 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
     scene.add(mannequinGroup);
 
     // Anthropometric Scale Factors based on profile
-    const chestScale = (profile.bodyProportions.chestVal || (isMale ? 40 : 34)) / 38;
-    const waistScale = (profile.bodyProportions.waistVal || (isMale ? 34 : 28)) / 32;
-    const heightScale = (profile.bodyProportions.heightCm || 175) / 175;
-    const skinColor = new THREE.Color(profile.bodyProportions.skinToneHex || 0xC68642);
+    const chestVal = profile.bodyProportions.chestVal || (isMale ? 40 : 34);
+    const waistVal = profile.bodyProportions.waistVal || (isMale ? 34 : 28);
+    const heightCm = profile.bodyProportions.heightCm || 175;
+
+    const chestScale = chestVal / 38;
+    const waistScale = waistVal / 32;
+    const heightScale = heightCm / 175;
+    const skinColor = new THREE.Color(profile.bodyProportions.skinToneHex || (isMale ? 0xC68642 : 0xD9A066));
 
     const skinMaterial = new THREE.MeshStandardMaterial({
       color: skinColor,
@@ -182,14 +324,13 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
     );
     torsoGeo.scale(1.15, 1, 0.75); // Oval torso cross-section
     const topMaterial = new THREE.MeshStandardMaterial({
-      color: selectedTop.color,
+      color: parseHexColor(selectedTop.color),
       roughness: 0.7,
       metalness: 0.1
     });
     const torsoMesh = new THREE.Mesh(torsoGeo, topMaterial);
     torsoMesh.position.y = 0.75 * heightScale;
     torsoMesh.castShadow = true;
-    torsoMeshRef.current = torsoMesh;
     mannequinGroup.add(torsoMesh);
 
     // Collar detail
@@ -214,6 +355,9 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
     rightArm.castShadow = true;
     mannequinGroup.add(rightArm);
 
+    // Store references for top meshes
+    topMeshesRef.current = [torsoMesh, leftArm, rightArm];
+
     // Hands
     const handGeo = new THREE.SphereGeometry(0.05, 16, 16);
     const leftHand = new THREE.Mesh(handGeo, skinMaterial);
@@ -232,7 +376,7 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
       24
     );
     const bottomMaterial = new THREE.MeshStandardMaterial({
-      color: selectedBottom.color,
+      color: parseHexColor(selectedBottom.color),
       roughness: 0.75,
       metalness: 0.05
     });
@@ -251,7 +395,7 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
     // SHOES / FOOTWEAR
     const shoeGeo = new THREE.BoxGeometry(0.12, 0.09, 0.24);
     const shoeMat = new THREE.MeshStandardMaterial({
-      color: selectedFootwear.color,
+      color: parseHexColor(selectedFootwear.color),
       roughness: 0.5
     });
 
@@ -308,68 +452,74 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
     window.addEventListener('touchmove', onTouchMove);
     window.addEventListener('touchend', onTouchEnd);
 
-    // 7. Render Loop
+    // 7. Render Loop with optional Auto-Rotation
     let animationFrameId;
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
+      if (isAutoRotating && mannequinGroupRef.current && !isDraggingRef.current) {
+        mannequinGroupRef.current.rotation.y += 0.008;
+      }
       renderer.render(scene, camera);
     };
     animate();
 
-    // Resize handler
-    const handleResize = () => {
-      if (!container || !renderer || !camera) return;
-      const newWidth = container.clientWidth;
-      const newHeight = container.clientHeight || 520;
-      camera.aspect = newWidth / newHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(newWidth, newHeight);
-    };
-    window.addEventListener('resize', handleResize);
+    // 8. Robust Resize Handling via ResizeObserver
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        const { width: currentW, height: currentH } = entry.contentRect;
+        if (currentW > 50 && currentH > 50 && cameraRef.current && rendererRef.current) {
+          cameraRef.current.aspect = currentW / currentH;
+          cameraRef.current.updateProjectionMatrix();
+          rendererRef.current.setSize(currentW, currentH);
+        }
+      }
+    });
+    resizeObserver.observe(container);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      resizeObserver.disconnect();
       container.removeEventListener('mousedown', onMouseDown);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp);
       container.removeEventListener('touchstart', onTouchStart);
       window.removeEventListener('touchmove', onTouchMove);
       window.removeEventListener('touchend', onTouchEnd);
-      window.removeEventListener('resize', handleResize);
       if (renderer.domElement && renderer.domElement.parentNode) {
         renderer.domElement.parentNode.removeChild(renderer.domElement);
       }
     };
-  }, [profile.id]);
+  }, [profile.id, isAutoRotating]);
 
   // Update Top Color or Fit Heatmap
   useEffect(() => {
-    if (!torsoMeshRef.current) return;
-    if (showFitHeatmap) {
-      // Fit heatmap colors: Green = optimal drape, Amber = snug chest strain, Blue = relaxed waist
-      torsoMeshRef.current.material.color.setHex(0x10B981); // Emerald green optimal
-    } else {
-      torsoMeshRef.current.material.color.setHex(selectedTop.color);
-    }
+    if (!topMeshesRef.current || topMeshesRef.current.length === 0) return;
+    const targetColor = showFitHeatmap ? 0x10B981 : parseHexColor(selectedTop.color);
+    topMeshesRef.current.forEach(mesh => {
+      if (mesh && mesh.material) {
+        mesh.material.color.setHex(targetColor);
+      }
+    });
   }, [selectedTop, showFitHeatmap]);
 
   // Update Bottom Color
   useEffect(() => {
-    if (!legsMeshRef.current) return;
+    if (!legsMeshRef.current || legsMeshRef.current.length === 0) return;
+    const targetColor = showFitHeatmap ? 0x059669 : parseHexColor(selectedBottom.color);
     legsMeshRef.current.forEach(mesh => {
-      if (showFitHeatmap) {
-        mesh.material.color.setHex(0x059669); // Optimal drape
-      } else {
-        mesh.material.color.setHex(selectedBottom.color);
+      if (mesh && mesh.material) {
+        mesh.material.color.setHex(targetColor);
       }
     });
   }, [selectedBottom, showFitHeatmap]);
 
   // Update Footwear Color
   useEffect(() => {
-    if (!shoesMeshRef.current) return;
+    if (!shoesMeshRef.current || shoesMeshRef.current.length === 0) return;
     shoesMeshRef.current.forEach(mesh => {
-      mesh.material.color.setHex(selectedFootwear.color);
+      if (mesh && mesh.material) {
+        mesh.material.color.setHex(parseHexColor(selectedFootwear.color));
+      }
     });
   }, [selectedFootwear]);
 
@@ -412,6 +562,22 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
             <ShieldCheck className="w-6 h-6 text-emerald-600" />
           </div>
         </div>
+
+        {/* Active Equipped Banner if passed from Wardrobe */}
+        {activeItemBanner && (
+          <div className="mt-4 p-3 bg-purple-50 rounded-2xl border border-purple-200 flex items-center justify-between text-xs text-purple-900 animate-in fade-in">
+            <div className="flex items-center space-x-2">
+              <Sparkles className="w-4 h-4 text-purple-600" />
+              <span><strong>{activeItemBanner}</strong> is now visualized on your 3D digital twin!</span>
+            </div>
+            <button
+              onClick={() => setActiveItemBanner(null)}
+              className="text-purple-600 hover:text-purple-800 font-bold text-[11px]"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Main 3D Stage & Outfitting Console */}
@@ -421,7 +587,7 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
         <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-5 flex flex-col justify-between overflow-hidden relative">
           
           {/* Canvas Floating Controls */}
-          <div className="absolute top-6 left-6 right-6 z-10 flex items-center justify-between pointer-events-none">
+          <div className="absolute top-6 left-6 right-6 z-10 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
             {/* View Angle Switcher */}
             <div className="bg-white/90 backdrop-blur-md p-1.5 rounded-2xl border border-slate-200 shadow-sm pointer-events-auto flex items-center space-x-1 text-xs">
               {['front', 'angle', 'side', 'back'].map((ang) => (
@@ -437,18 +603,33 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
               ))}
             </div>
 
-            {/* Fit Tension Heatmap Toggle */}
-            <button
-              onClick={() => setShowFitHeatmap(!showFitHeatmap)}
-              className={`px-3 py-1.5 rounded-2xl text-xs font-bold border transition shadow-sm pointer-events-auto flex items-center space-x-1.5 backdrop-blur-md ${
-                showFitHeatmap 
-                  ? 'bg-emerald-600 text-white border-emerald-500 ring-2 ring-emerald-300' 
-                  : 'bg-white/90 text-slate-700 border-slate-200 hover:bg-white'
-              }`}
-            >
-              <HeartPulse className="w-3.5 h-3.5" />
-              <span>{showFitHeatmap ? 'Fit Heatmap: ON' : 'Fit Heatmap: OFF'}</span>
-            </button>
+            {/* Right Controls: Auto Rotate & Heatmap Toggle */}
+            <div className="flex items-center space-x-2 pointer-events-auto">
+              <button
+                onClick={() => setIsAutoRotating(!isAutoRotating)}
+                className={`px-3 py-1.5 rounded-2xl text-xs font-bold border transition shadow-sm flex items-center space-x-1.5 backdrop-blur-md ${
+                  isAutoRotating 
+                    ? 'bg-purple-600 text-white border-purple-500' 
+                    : 'bg-white/90 text-slate-700 border-slate-200 hover:bg-white'
+                }`}
+                title="Toggle continuous 360 rotation"
+              >
+                <RotateCw className={`w-3.5 h-3.5 ${isAutoRotating ? 'animate-spin' : ''}`} />
+                <span>{isAutoRotating ? 'Auto-Spin: ON' : '360° Spin'}</span>
+              </button>
+
+              <button
+                onClick={() => setShowFitHeatmap(!showFitHeatmap)}
+                className={`px-3 py-1.5 rounded-2xl text-xs font-bold border transition shadow-sm flex items-center space-x-1.5 backdrop-blur-md ${
+                  showFitHeatmap 
+                    ? 'bg-emerald-600 text-white border-emerald-500 ring-2 ring-emerald-300' 
+                    : 'bg-white/90 text-slate-700 border-slate-200 hover:bg-white'
+                }`}
+              >
+                <HeartPulse className="w-3.5 h-3.5" />
+                <span>{showFitHeatmap ? 'Fit Heatmap: ON' : 'Fit Heatmap'}</span>
+              </button>
+            </div>
           </div>
 
           {/* 3D Mannequin Canvas Container */}
@@ -474,10 +655,10 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
 
           {/* Heatmap Legend when active */}
           {showFitHeatmap && (
-            <div className="mt-2 p-3 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center justify-between text-xs text-emerald-900">
+            <div className="mt-2 p-3 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center justify-between text-xs text-emerald-900 animate-in fade-in">
               <div className="flex items-center space-x-2">
                 <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span><strong>Green Zone:</strong> Zero button gaping; optimal armhole ease and fabric drape.</span>
+                <span><strong>Green Zone:</strong> Zero button gaping; optimal armhole ease and tailored fabric drape.</span>
               </div>
               <span className="font-bold">Zero Size Return Risk</span>
             </div>
@@ -505,11 +686,13 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
                 <span className="font-bold text-slate-700 uppercase tracking-wider text-[11px]">
                   1. Upper Body Layer:
                 </span>
-                <span className="text-rose-600 font-semibold">{selectedTop.name}</span>
+                <span className="text-rose-600 font-semibold truncate max-w-[200px]" title={selectedTop.name}>
+                  {selectedTop.name}
+                </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {topOptions.map((top) => {
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+                {dynamicTopOptions.map((top) => {
                   const isSelected = selectedTop.id === top.id;
                   const isSuggestion = top.type === 'Suggestion';
 
@@ -517,7 +700,7 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
                     <button
                       key={top.id}
                       onClick={() => setSelectedTop(top)}
-                      className={`p-2.5 rounded-xl text-left border transition text-xs flex items-center justify-between ${
+                      className={`p-2 rounded-xl text-left border transition text-xs flex items-center justify-between ${
                         isSelected 
                           ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-rose-400/40' 
                           : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
@@ -526,13 +709,13 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
                       <div className="min-w-0 pr-2">
                         <span className="font-bold block truncate">{top.name}</span>
                         <span className={`text-[10px] block ${isSelected ? 'text-amber-300' : 'text-slate-500'}`}>
-                          {top.brand} • {top.size}
+                          {top.brand} {top.price > 0 ? `• ₹${top.price}` : '• Owned'}
                         </span>
                       </div>
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold uppercase shrink-0 ${
+                      <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase shrink-0 ${
                         isSuggestion ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'
                       }`}>
-                        {isSuggestion ? 'NEW' : 'CLOSET'}
+                        {isSuggestion ? 'BUY' : 'CLOSET'}
                       </span>
                     </button>
                   );
@@ -546,11 +729,13 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
                 <span className="font-bold text-slate-700 uppercase tracking-wider text-[11px]">
                   2. Lower Body Layer:
                 </span>
-                <span className="text-rose-600 font-semibold">{selectedBottom.name}</span>
+                <span className="text-rose-600 font-semibold truncate max-w-[200px]" title={selectedBottom.name}>
+                  {selectedBottom.name}
+                </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {bottomOptions.map((bot) => {
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto pr-1">
+                {dynamicBottomOptions.map((bot) => {
                   const isSelected = selectedBottom.id === bot.id;
                   const isSuggestion = bot.type === 'Suggestion';
 
@@ -558,7 +743,7 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
                     <button
                       key={bot.id}
                       onClick={() => setSelectedBottom(bot)}
-                      className={`p-2.5 rounded-xl text-left border transition text-xs flex items-center justify-between ${
+                      className={`p-2 rounded-xl text-left border transition text-xs flex items-center justify-between ${
                         isSelected 
                           ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-rose-400/40' 
                           : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
@@ -567,13 +752,13 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
                       <div className="min-w-0 pr-2">
                         <span className="font-bold block truncate">{bot.name}</span>
                         <span className={`text-[10px] block ${isSelected ? 'text-amber-300' : 'text-slate-500'}`}>
-                          {bot.brand} • {bot.size}
+                          {bot.brand} {bot.price > 0 ? `• ₹${bot.price}` : '• Owned'}
                         </span>
                       </div>
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold uppercase shrink-0 ${
+                      <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase shrink-0 ${
                         isSuggestion ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'
                       }`}>
-                        {isSuggestion ? 'NEW' : 'CLOSET'}
+                        {isSuggestion ? 'BUY' : 'CLOSET'}
                       </span>
                     </button>
                   );
@@ -598,7 +783,7 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
                     <button
                       key={foot.id}
                       onClick={() => setSelectedFootwear(foot)}
-                      className={`p-2.5 rounded-xl text-left border transition text-xs flex items-center justify-between ${
+                      className={`p-2 rounded-xl text-left border transition text-xs flex items-center justify-between ${
                         isSelected 
                           ? 'bg-slate-900 text-white border-slate-900 shadow-md' 
                           : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
@@ -619,10 +804,10 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
           </div>
 
           {/* 3D Visualized Outfit Cart CTA Card */}
-          <div className="bg-gradient-to-r from-slate-900 to-indigoIndian-900 text-white rounded-3xl p-5 border border-slate-800 shadow-lg space-y-3">
+          <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-purple-950 text-white rounded-3xl p-5 border border-slate-800 shadow-xl space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-xs text-slate-400 block">3D Visualized Look Value</span>
+                <span className="text-xs text-slate-400 block">Visualized Look Value</span>
                 <span className="text-xl font-bold font-serif text-white">
                   {currentOutfitTotal > 0 ? `₹${currentOutfitTotal.toLocaleString('en-IN')}` : 'Full Closet Outfit (₹0)'}
                 </span>
@@ -634,12 +819,11 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
             </div>
 
             <p className="text-xs text-slate-300 leading-tight">
-              Combines your <strong>{selectedTop.name}</strong> with <strong>{selectedBottom.name}</strong> and <strong>{selectedFootwear.name}</strong>.
+              Combines <strong>{selectedTop.name}</strong> + <strong>{selectedBottom.name}</strong> + <strong>{selectedFootwear.name}</strong>.
             </p>
 
             <button
               onClick={() => {
-                // If top or bottom has price, add to cart
                 if (selectedTop.price > 0) {
                   onAddToCart({
                     id: selectedTop.id,
@@ -647,7 +831,7 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
                     brand: selectedTop.brand,
                     price: selectedTop.price,
                     predictedSize: selectedTop.size,
-                    imageUrl: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&auto=format&fit=crop&q=80"
+                    imageUrl: selectedTop.imageUrl || "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&auto=format&fit=crop&q=80"
                   });
                 }
                 if (selectedBottom.price > 0) {
@@ -657,7 +841,7 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
                     brand: selectedBottom.brand,
                     price: selectedBottom.price,
                     predictedSize: selectedBottom.size,
-                    imageUrl: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&auto=format&fit=crop&q=80"
+                    imageUrl: selectedBottom.imageUrl || "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&auto=format&fit=crop&q=80"
                   });
                 }
                 if (selectedFootwear.price > 0) {
@@ -671,10 +855,10 @@ export default function ThreeDBodyTryOn({ profile, onAddToCart, onAddBundleToCar
                   });
                 }
               }}
-              className="w-full py-3 px-4 bg-gradient-to-r from-rose-600 via-amber-600 to-amber-500 hover:from-rose-700 hover:to-amber-600 text-white rounded-2xl text-xs font-bold shadow-md transition flex items-center justify-center space-x-2"
+              className="w-full py-3 px-4 bg-gradient-to-r from-rose-600 via-pink-600 to-amber-500 hover:from-rose-700 hover:to-amber-600 text-white rounded-2xl text-xs font-bold shadow-md transition flex items-center justify-center space-x-2"
             >
               <ShoppingBag className="w-4 h-4 text-amber-300" />
-              <span>Add Visualized 3D Outfit to Cart</span>
+              <span>{currentOutfitTotal > 0 ? "Add Visualized 3D Outfit to Cart" : "Save 3D Outfit Pairing"}</span>
             </button>
           </div>
 

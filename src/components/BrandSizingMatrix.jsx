@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Ruler, 
   ShieldCheck, 
@@ -61,6 +61,11 @@ export default function BrandSizingMatrix({ profile, onUpdateProfileMeasurements
     setSkinToneName(profile.bodyProportions.skinToneName);
     setObesityCategory(profile.bodyProportions.obesityCategory);
   };
+
+  useEffect(() => {
+    handleResetToPhotos();
+    setSelectedBrand(isMale ? 'Snitch' : 'Zara');
+  }, [profile.id]);
 
   const skinTonePresets = [
     { name: "Fair Peach Undertone", hex: "#F3CFB3" },

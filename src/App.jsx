@@ -14,6 +14,7 @@ import { Sparkles, ShieldCheck, ShoppingBag, ArrowRight } from 'lucide-react';
 export default function App() {
   const [activeProfileId, setActiveProfileId] = useState('user_aditya');
   const [activeTab, setActiveTab] = useState('wardrobe');
+  const [activeTryOnItem, setActiveTryOnItem] = useState(null);
   
   // Dynamic per-profile wardrobe state so users can add, toggle, and delete items
   const [wardrobeState, setWardrobeState] = useState(() => {
@@ -203,13 +204,19 @@ export default function App() {
             onDeleteItem={handleDeleteItem}
             onAddNewItem={handleAddNewItem}
             onSwitchToRecommendations={() => setActiveTab('recommendations')}
+            onOpenTryOn={(item) => {
+              setActiveTryOnItem(item);
+              setActiveTab('tryon');
+              showToast(`Loaded "${item.name}" into 3D Try-On Studio!`);
+            }}
           />
         )}
 
-        {/* Tab 2: 3D Virtual Body & AR Try-On Studio (NEW!) */}
+        {/* Tab 2: 3D Virtual Body & AR Try-On Studio */}
         {activeTab === 'tryon' && (
           <ThreeDBodyTryOn
             profile={currentProfile}
+            activeTryOnItem={activeTryOnItem}
             onAddToCart={handleAddToCart}
             onAddBundleToCart={handleAddBundleToCart}
           />

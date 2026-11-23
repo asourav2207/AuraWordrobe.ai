@@ -15,7 +15,9 @@ import {
   Youtube,
   Link as LinkIcon,
   Play,
-  RotateCw
+  RotateCw,
+  Clock,
+  Film
 } from 'lucide-react';
 
 export default function InstaTrendCloner({ trends, currentGender, onAddBundleToCart, onAddToCart }) {
@@ -24,8 +26,9 @@ export default function InstaTrendCloner({ trends, currentGender, onAddBundleToC
   const [analysisStep, setAnalysisStep] = useState(0);
   const [customTrends, setCustomTrends] = useState([]);
   const [selectedItemsMap, setSelectedItemsMap] = useState({});
+  const [recentlyDeconstructedId, setRecentlyDeconstructedId] = useState(null);
 
-  // Combine static and dynamically analyzed trends
+  // Combine custom analyzed trends with catalog trends
   const allTrends = [...customTrends, ...trends].filter(t => t.targetGender === currentGender);
 
   const toggleItemSelection = (trendId, itemIdx) => {
@@ -38,10 +41,11 @@ export default function InstaTrendCloner({ trends, currentGender, onAddBundleToC
     });
   };
 
-  const handleDeconstructVideo = (e) => {
-    if (e) e.preventDefault();
-    if (!videoUrl.trim()) return;
+  const runDeconstructPipeline = (urlToProcess) => {
+    const targetUrl = (urlToProcess || videoUrl).trim();
+    if (!targetUrl) return;
 
+    setVideoUrl(targetUrl);
     setAnalyzing(true);
     setAnalysisStep(1);
 
@@ -51,21 +55,28 @@ export default function InstaTrendCloner({ trends, currentGender, onAddBundleToC
       setAnalyzing(false);
       setAnalysisStep(0);
 
-      // Determine aesthetic based on URL or gender
       const isFemale = currentGender === 'female';
+      const isYoutube = targetUrl.toLowerCase().includes('youtube') || targetUrl.toLowerCase().includes('youtu.be');
+      const newTrendId = `custom_reel_${Date.now()}`;
+
       const newTrend = {
-        id: `custom_reel_${Date.now()}`,
+        id: newTrendId,
         targetGender: currentGender,
-        title: isFemale ? "Deconstructed Reel: Silk Organza Overlay & Palazzos" : "Deconstructed Short: Relaxed Cuban Collar & Pleated Trousers",
-        influencerHandle: videoUrl.includes('youtube') ? "@youtube_creator_style" : "@instagram_creator_india",
-        videoUrl: videoUrl,
-        platform: videoUrl.includes('youtube') ? "YouTube Short" : "Instagram Reel",
-        aestheticName: isFemale ? "Viral Festive Indo-Western" : "Minimalist Summer Casual",
-        trendVelocity: "🔥 Newly Analyzed from Video",
+        title: isFemale ? "Deconstructed Viral Reel: Silk Organza Cape & High-Rise Palazzos" : "Deconstructed Look: Relaxed Cuban Linen & Pleated Trousers",
+        influencerHandle: isYoutube ? "@style_in_focus_india" : "@kritika_khurana_lookbook",
+        videoUrl: targetUrl,
+        platform: isYoutube ? "YouTube Short" : "Instagram Reel",
+        aestheticName: isFemale ? "Modern Royal Indo-Western" : "Minimalist Summer Casual",
+        trendVelocity: "🔥 Just Deconstructed from Video",
         heroImage: isFemale 
           ? "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&auto=format&fit=crop&q=80"
           : "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&auto=format&fit=crop&q=80",
-        inspirationDesc: `Extracted directly from ${videoUrl}. AI identified 3 key outfit layers, matched pattern tolerances against Myntra & Amazon, and verified compatibility with your closet.`,
+        keyframes: [
+          { time: "0:02", label: "Silhouette Detection", img: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=300&auto=format&fit=crop&q=80" },
+          { time: "0:06", label: "Fabric & Drape", img: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=300&auto=format&fit=crop&q=80" },
+          { time: "0:12", label: "Retail Item Matching", img: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=300&auto=format&fit=crop&q=80" }
+        ],
+        inspirationDesc: `Computer Vision multi-frame model processed ${targetUrl}. AI detected 3 distinct outfit pieces, verified color and texture tolerances against Myntra & Amazon, and detected that you already own 1 closet item to complete this look!`,
         alreadyOwnsMatchingItem: isFemale ? {
           name: "Black Tailored High-Rise Pants",
           itemId: "ananya_item_3",
@@ -128,16 +139,21 @@ export default function InstaTrendCloner({ trends, currentGender, onAddBundleToC
         ],
         bundleTotal: isFemale ? 4797 : 5897,
         bundleDiscountPrice: isFemale ? 4077 : 5012,
-        bundleSavings: "Save 15% when bundled"
+        bundleSavings: "Save 15% bundled"
       };
 
       setCustomTrends(prev => [newTrend, ...prev]);
-      setVideoUrl('');
+      setRecentlyDeconstructedId(newTrendId);
     }, 2000);
   };
 
-  const setDemoUrl = (url) => {
-    setVideoUrl(url);
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    runDeconstructPipeline();
+  };
+
+  const handleSampleClick = (url) => {
+    runDeconstructPipeline(url);
   };
 
   return (
@@ -172,17 +188,16 @@ export default function InstaTrendCloner({ trends, currentGender, onAddBundleToC
         </div>
 
         {/* Video Link Input Form */}
-        <form onSubmit={handleDeconstructVideo} className="space-y-3">
+        <form onSubmit={handleFormSubmit} className="space-y-3">
           <div className="flex flex-col sm:flex-row items-center gap-2">
             <div className="relative flex-1 w-full">
               <LinkIcon className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
-                type="url"
+                type="text"
                 placeholder="Paste Instagram Reel or YouTube Video link (e.g., https://www.instagram.com/reel/C3b4X...)"
                 value={videoUrl}
                 onChange={(e) => setVideoUrl(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-2xl text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/50 backdrop-blur-md"
-                required
               />
             </div>
             <button
@@ -193,7 +208,7 @@ export default function InstaTrendCloner({ trends, currentGender, onAddBundleToC
               {analyzing ? (
                 <>
                   <RotateCw className="w-4 h-4 animate-spin text-amber-300" />
-                  <span>Deconstructing Frames...</span>
+                  <span>Deconstructing Video Frames...</span>
                 </>
               ) : (
                 <>
@@ -204,29 +219,32 @@ export default function InstaTrendCloner({ trends, currentGender, onAddBundleToC
             </button>
           </div>
 
-          {/* Quick Demo Pre-fill Chips */}
+          {/* Quick Demo Pre-fill Chips with Instant 1-Click Execution */}
           <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
-            <span className="text-slate-400 text-[11px] font-semibold">Try sample links:</span>
+            <span className="text-slate-400 text-[11px] font-semibold">Try sample links (1-click):</span>
             <button
               type="button"
-              onClick={() => setDemoUrl("https://www.instagram.com/reel/C3b4X9vK8wz/")}
-              className="px-2.5 py-1 bg-white/10 hover:bg-white/15 text-slate-200 rounded-lg text-[11px] border border-white/10 transition"
+              onClick={() => handleSampleClick("https://www.instagram.com/reel/C3b4X9vK8wz/")}
+              className="px-2.5 py-1 bg-white/10 hover:bg-white/20 text-slate-200 rounded-lg text-[11px] border border-white/15 transition flex items-center space-x-1"
             >
-              @kritika_khurana Indo-Western Reel
+              <Instagram className="w-3 h-3 text-pink-400" />
+              <span>@kritika_khurana Indo-Western Reel</span>
             </button>
             <button
               type="button"
-              onClick={() => setDemoUrl("https://www.youtube.com/shorts/q8J7_W12B9k")}
-              className="px-2.5 py-1 bg-white/10 hover:bg-white/15 text-slate-200 rounded-lg text-[11px] border border-white/10 transition"
+              onClick={() => handleSampleClick("https://www.youtube.com/shorts/q8J7_W12B9k")}
+              className="px-2.5 py-1 bg-white/10 hover:bg-white/20 text-slate-200 rounded-lg text-[11px] border border-white/15 transition flex items-center space-x-1"
             >
-              @streetstyle_bengaluru Minimalist Look
+              <Youtube className="w-3 h-3 text-rose-400" />
+              <span>@theformaledit Cuban Collar Short</span>
             </button>
             <button
               type="button"
-              onClick={() => setDemoUrl("https://www.instagram.com/reel/C2a8L1_vG7k/")}
-              className="px-2.5 py-1 bg-white/10 hover:bg-white/15 text-slate-200 rounded-lg text-[11px] border border-white/10 transition"
+              onClick={() => handleSampleClick("https://www.instagram.com/reel/C2a8L1_vG7k/")}
+              className="px-2.5 py-1 bg-white/10 hover:bg-white/20 text-slate-200 rounded-lg text-[11px] border border-white/15 transition flex items-center space-x-1"
             >
-              @tarun_chawla Old Money Indian
+              <Instagram className="w-3 h-3 text-pink-400" />
+              <span>@streetstyle_bengaluru Minimalist Look</span>
             </button>
           </div>
 
@@ -234,16 +252,19 @@ export default function InstaTrendCloner({ trends, currentGender, onAddBundleToC
           {analyzing && (
             <div className="p-4 rounded-2xl bg-white/10 border border-white/10 space-y-2 animate-in fade-in">
               <div className="flex justify-between text-xs font-semibold text-rose-300">
-                <span>
-                  {analysisStep === 1 && "Extracting keyframes at 0:02, 0:06, 0:12..."}
-                  {analysisStep === 2 && "Segmenting garment silhouettes & fabric textures..."}
-                  {analysisStep === 3 && "Searching matching retail listings on Myntra & Amazon..."}
+                <span className="flex items-center space-x-1.5">
+                  <Film className="w-3.5 h-3.5 animate-pulse" />
+                  <span>
+                    {analysisStep === 1 && "Step 1: Extracting keyframes at 0:02, 0:06, 0:12..."}
+                    {analysisStep === 2 && "Step 2: AI Computer Vision segmenting silhouettes & drape..."}
+                    {analysisStep === 3 && "Step 3: Querying Myntra & Amazon retail listings..."}
+                  </span>
                 </span>
                 <span className="font-mono">{analysisStep * 33}%</span>
               </div>
-              <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
+              <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
                 <div 
-                  className="bg-gradient-to-r from-rose-500 to-amber-400 h-full transition-all duration-500" 
+                  className="bg-gradient-to-r from-rose-500 via-pink-400 to-amber-400 h-full transition-all duration-500" 
                   style={{ width: `${analysisStep * 33}%` }}
                 />
               </div>
@@ -267,14 +288,17 @@ export default function InstaTrendCloner({ trends, currentGender, onAddBundleToC
           {allTrends.map((trend) => {
             const selectedIndices = selectedItemsMap[trend.id] || trend.bundleItems.map((_, i) => i);
             const hasOwnedPiece = !!trend.alreadyOwnsMatchingItem;
+            const isNewlyDeconstructed = trend.id === recentlyDeconstructedId;
 
             return (
               <div
                 key={trend.id}
-                className="bg-white rounded-3xl border border-slate-200 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between"
+                className={`bg-white rounded-3xl border shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between ${
+                  isNewlyDeconstructed ? 'ring-2 ring-purple-500 border-purple-400' : 'border-slate-200'
+                }`}
               >
                 {/* Top Banner: Influencer & Reel Hook */}
-                <div className="p-5 pb-3 border-b border-slate-100 flex items-center justify-between">
+                <div className="p-5 pb-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                   <div className="flex items-center space-x-3">
                     <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 p-0.5">
                       <div className="w-full h-full bg-white rounded-full flex items-center justify-center">
@@ -310,6 +334,26 @@ export default function InstaTrendCloner({ trends, currentGender, onAddBundleToC
                     </div>
                   </div>
 
+                  {/* If custom video deconstructed, show keyframe reel */}
+                  {trend.keyframes && (
+                    <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                      <span className="text-[11px] font-bold text-slate-700 flex items-center space-x-1">
+                        <Clock className="w-3.5 h-3.5 text-rose-500" />
+                        <span>Extracted Video Frames:</span>
+                      </span>
+                      <div className="grid grid-cols-3 gap-2">
+                        {trend.keyframes.map((kf, i) => (
+                          <div key={i} className="rounded-xl overflow-hidden border border-slate-200 bg-white">
+                            <img src={kf.img} alt={kf.label} className="w-full h-16 object-cover" />
+                            <div className="p-1 text-center bg-slate-900 text-white text-[9px] font-mono">
+                              {kf.time} • {kf.label}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Closet Match Alert */}
                   {hasOwnedPiece && (
                     <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-start space-x-2.5">
@@ -323,19 +367,16 @@ export default function InstaTrendCloner({ trends, currentGender, onAddBundleToC
                     </div>
                   )}
 
-                  <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-2xl border border-slate-200">
-                    <strong className="text-slate-900">Styling Rationale: </strong>
+                  {/* Inspiration Description */}
+                  <p className="text-xs text-slate-600 leading-relaxed">
                     {trend.inspirationDesc}
                   </p>
 
-                  {/* Bundle Items Breakdown with Checkboxes */}
-                  <div className="space-y-2 pt-1">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold text-slate-500 uppercase tracking-wider">
-                        Look Pieces ({trend.bundleItems.length} Items):
-                      </span>
-                      <span className="text-[11px] text-slate-400">Tap item to toggle</span>
-                    </div>
+                  {/* Deconstructed Outfit Breakdown */}
+                  <div className="space-y-2 pt-2 border-t border-slate-100">
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                      Deconstructed Garment Pieces ({trend.bundleItems.length})
+                    </span>
 
                     <div className="space-y-2">
                       {trend.bundleItems.map((item, idx) => {
@@ -344,101 +385,77 @@ export default function InstaTrendCloner({ trends, currentGender, onAddBundleToC
                         return (
                           <div
                             key={idx}
-                            onClick={() => toggleItemSelection(trend.id, idx)}
-                            className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between text-xs ${
-                              item.isOwned 
-                                ? 'bg-emerald-50/60 border-emerald-200' 
-                                : isSelected 
-                                  ? 'bg-purple-50/50 border-purple-300' 
-                                  : 'bg-slate-50 border-slate-200 opacity-60'
+                            className={`p-3 rounded-2xl border transition-all flex items-center justify-between text-xs ${
+                              isSelected 
+                                ? 'bg-slate-50/90 border-slate-200 text-slate-900' 
+                                : 'bg-slate-50/40 border-slate-100 text-slate-400'
                             }`}
                           >
-                            <div className="flex items-center space-x-2.5">
+                            <div className="flex items-center space-x-3">
                               <input
                                 type="checkbox"
                                 checked={isSelected}
-                                onChange={() => {}}
-                                className="w-4 h-4 rounded text-purple-600 accent-purple-600 pointer-events-none"
+                                onChange={() => toggleItemSelection(trend.id, idx)}
+                                className="w-4 h-4 text-rose-600 rounded focus:ring-rose-500 border-slate-300"
                               />
                               <div>
-                                <div className="flex items-center space-x-1.5">
-                                  <span className="font-bold text-slate-900">{item.name}</span>
-                                  {item.isOwned && (
-                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-600 text-white">
-                                      IN CLOSET
-                                    </span>
+                                <span className={`font-bold block ${isSelected ? 'text-slate-900' : 'text-slate-400'}`}>
+                                  {item.name}
+                                </span>
+                                <div className="flex items-center space-x-2 text-[11px]">
+                                  <span className="text-slate-500">{item.brand}</span>
+                                  <span>•</span>
+                                  <span className="text-rose-600 font-semibold">{item.store}</span>
+                                  {item.link && (
+                                    <a
+                                      href={item.link}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center text-slate-400 hover:text-rose-600"
+                                      title="Open merchant product page"
+                                    >
+                                      <ExternalLink className="w-3 h-3 ml-0.5" />
+                                    </a>
                                   )}
                                 </div>
-                                <span className="text-[10px] text-slate-500">{item.brand} • {item.store}</span>
                               </div>
                             </div>
 
-                            <div className="text-right">
-                              <span className="font-bold text-slate-900">₹{item.price.toLocaleString('en-IN')}</span>
-                              <a
-                                href={item.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                                className="block text-[10px] text-rose-600 hover:underline flex items-center justify-end space-x-0.5"
-                              >
-                                <span>Link</span>
-                                <ExternalLink className="w-2.5 h-2.5" />
-                              </a>
-                            </div>
+                            <span className="font-serif font-bold text-slate-900">
+                              ₹{item.price.toLocaleString('en-IN')}
+                            </span>
                           </div>
                         );
                       })}
                     </div>
                   </div>
 
-                  {/* Bundle Pricing Summary */}
-                  <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-between text-xs">
-                    <div>
-                      <span className="text-emerald-800 block text-[11px] font-semibold">{trend.bundleSavings}</span>
-                      <div className="flex items-baseline space-x-2 mt-0.5">
-                        <span className="text-base font-bold font-serif text-slate-900">₹{trend.bundleDiscountPrice.toLocaleString('en-IN')}</span>
-                        <span className="text-xs text-slate-400 line-through">₹{trend.bundleTotal.toLocaleString('en-IN')}</span>
-                      </div>
-                    </div>
-                    <span className="text-xs font-bold bg-emerald-600 text-white px-2 py-1 rounded-lg">
-                      15% OFF
-                    </span>
-                  </div>
-
                 </div>
 
-                {/* CTAs */}
-                <div className="p-5 pt-0 space-y-2">
-                  <button
-                    onClick={() => onAddBundleToCart(trend)}
-                    className="w-full py-3 px-4 bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 hover:from-rose-700 hover:to-purple-700 text-white rounded-2xl text-xs font-bold shadow-md hover:shadow-lg transition flex items-center justify-center space-x-2"
-                  >
-                    <ShoppingBag className="w-4 h-4 text-amber-300" />
-                    <span>Clone Look & Auto-Add All 3 to Cart (15% OFF)</span>
-                  </button>
+                {/* Card Footer: 1-Click Cart Addition */}
+                <div className="p-5 pt-0">
+                  <div className="p-4 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl text-white flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Total Bundle</span>
+                      <div className="flex items-baseline space-x-2">
+                        <span className="text-lg font-bold font-serif">
+                          ₹{trend.bundleDiscountPrice.toLocaleString('en-IN')}
+                        </span>
+                        <span className="text-xs line-through text-slate-400">
+                          ₹{trend.bundleTotal.toLocaleString('en-IN')}
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-amber-400 font-bold block">{trend.bundleSavings}</span>
+                    </div>
 
-                  {hasOwnedPiece && (
                     <button
-                      onClick={() => {
-                        const missingItems = trend.bundleItems.filter(i => !i.isOwned);
-                        missingItems.forEach(item => {
-                          onAddToCart({
-                            id: `${trend.id}_${item.name}`,
-                            title: item.name,
-                            brand: item.brand,
-                            price: item.price,
-                            predictedSize: "Pre-Mapped Sizing",
-                            imageUrl: trend.heroImage
-                          });
-                        });
-                      }}
-                      className="w-full py-2.5 px-3 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 border border-emerald-300"
+                      onClick={() => onAddBundleToCart(trend)}
+                      className="px-4 py-2.5 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white rounded-xl text-xs font-bold shadow-md shadow-rose-600/30 transition flex items-center space-x-1.5"
                     >
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
-                      <span>Smart Add Missing Pieces Only (Save ₹{trend.alreadyOwnsMatchingItem.savingValue})</span>
+                      <ShoppingBag className="w-3.5 h-3.5 text-amber-300" />
+                      <span>Clone Look to Cart</span>
                     </button>
-                  )}
+                  </div>
                 </div>
 
               </div>
