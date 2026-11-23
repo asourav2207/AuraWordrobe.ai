@@ -10,62 +10,44 @@ npm run dev
 
 ---
 
-## 1. Quick 3-Minute Reviewer Tour (Enhanced End-to-End Capabilities)
+## 1. Quick 3-Minute Reviewer Tour (Enhanced Capabilities)
 
-### Step 1: Switch Profiles (Multi-Subject Vision Deconstruction)
-- In the top banner, toggle between **Aditya (Male, 26)** and **Ananya (Female, 25)**.
-- Notice how the application instantly swaps the wardrobe inventory, condition audits, anthropometric dimensions, and brand size calculations based on the subject's gender and physical build.
+### Feature 1: Instagram & YouTube Video Look Deconstructor
+- Click the **"Reel Cloner"** tab.
+- At the top, observe the **Video Link Input Bar**: supports Instagram Reels (`https://instagram.com/reel/...`) and YouTube Shorts (`https://youtube.com/shorts/...`).
+- Click any of the quick sample chips (e.g. *"@kritika_khurana Indo-Western Reel"* or *"@streetstyle_bengaluru Minimalist Look"*).
+- Click **"Deconstruct & Replicate Look"**:
+  - Watch the live AI frame analysis bar (0:02, 0:06, 0:12 frame extraction $\to$ silhouette segmentation $\to$ Myntra/Amazon matching $\to$ closet synergy audit).
+  - The newly extracted look appears instantly in the feed with pre-mapped sizes, closet match alerts, and 1-click cart addition!
 
-### Step 2: Interactive Wardrobe Management & Condition Scoring
-- On the **"Wardrobe Audit"** tab:
-  - **Search & Filter:** Search by keyword (e.g., *"linen"*, *"polo"*, *"embroidered"*, *"black"*) or filter by Category and Occasion.
-  - **Interactive Triage:** Click **"Mark to Replace"** or **"Mark as Kept"** to toggle an item's status live. Watch the top counter and health scores update immediately!
-  - **Archive/Delete:** Click the trash icon to retire an item from rotation.
-  - **Add Custom Garment:** Click **"+ Add Garment"** to manually inventory a piece with fabric, occasion, and condition metrics.
-  - Click the **"Eye" icon** on any garment card to inspect the exact source lifestyle photo from which the computer vision model extracted that garment.
+### Feature 2: Full Biometric & Anthropometric Sizing Engine (Auto-Detected & Pre-Filled)
+- Click the **"Biometric Sizing"** tab.
+- **Pre-Filled from Photos:**
+  - Notice all detected body landmarks: **Height (175 cm / 5'9")**, **Chest (40")**, **Waist (34")**, **Arm / Sleeve (25")**, **Leg Inseam (31")**, **Shoulder Width (18")**, **Neck (15.5")**, **Body Type (Athletic Mesomorph)**, **BMI (24.2)**, and **Skin Tone (Warm Golden Indian Wheatish with color swatch)**.
+- **Interactive Calibration:**
+  - Drag any slider (e.g., adjust Chest to 42" or Waist to 36") or pick a different skin tone swatch.
+  - Watch the brand sizing cards (**Snitch, Rare Rabbit, Zara, Levi's, FabIndia/Manyavar, Marks & Spencer**) recalculate live in real time!
+- **Sizes of Clothes Worn in Photos:**
+  - Switch to the **"Cloth Size Guessed in Photos"** view at the top right:
+  - Shows the AI's tension & fold analysis of the actual clothes worn in the uploaded photos (e.g. Navy Polo in Photo #3 guessed as *Size L in Snitch / Size M in Zara* at 94% confidence).
 
-### Step 3: Test the Anti-Decision Fatigue "Why Buy" Recommender & Outfit Simulator
-- Click the **"Logical 'Why Buy'"** tab in the navigation bar.
-- Notice that instead of 50,000 algorithmic tiles, the user is presented with **strictly 3 high-impact items**:
-  - Exactly 1 high-quality **REPLACE** piece (e.g. Rare Rabbit Sage Green Linen Shirt replacing the faded plaid shirt).
-  - Exactly 2 strategic **ADD** pieces that unlock at least 5 new permutations with existing clothes (e.g. Sand Beige Overshirt or Ecru Wide-Leg Palazzos).
-- **Interactive Outfit Permutations Simulator:** Click **"Simulate Outfits With Your Closet"** on any recommendation! It expands to reveal 2–3 distinct outfits showing how the recommended piece combines with items in the user's closet (e.g. *"Overshirt + Navy Pique Polo + Black Chinos for Indiranagar Dining"*).
-- Inspect the **In-Cart Demographic Proof** card: shows peer acceptance rates (e.g. *"89% of tech professionals in Bengaluru kept this item; 3.8% return rate"*).
-- Click **"View Live on Myntra / Amazon / Flipkart"** to verify valid, active e-commerce search deep links.
-- Click **"Add to Cart (Size L)"** — notice that the size has already been pre-calculated based on that brand's sizing framework.
+### Feature 3: Interactive 3D Virtual Body & AR Try-On Studio (Snapchat & Lenskart Grade)
+- Click the **"3D Virtual Try-On"** tab (with the purple 3D badge).
+- **Interactive 3D Mannequin:**
+  - An anatomical 3D avatar rendered with Three.js that automatically morphs to the user's height, chest, waist, shoulder width, and skin tone.
+  - **Orbit Controls:** Click and drag horizontally with your mouse or finger to **rotate the avatar 360°**.
+  - **View Presets:** Click **Front**, **Angle (45°)**, **Side**, or **Back** to instantly snap the camera.
+  - **Fit Heatmap Mode:** Click **"Fit Heatmap: ON"** to see fabric strain and drape tension in real-time (Green = optimal drape, Amber = snug chest, Blue = relaxed ease).
+- **Populate with Existing Closet + New Suggestions:**
+  - In the right-hand panel, mix and match **Upper Body** items (e.g., try the *Snitch Sand Beige Overshirt* or the existing *Navy Pique Polo*), **Lower Body** items (*Black Chinos* vs. *Blue Denim*), and **Footwear** (*Tan Kolhapuris* vs. *White Sneakers*).
+  - Watch the 3D avatar update its fabrics and colors instantly!
+  - Click **"Add Visualized 3D Outfit to Cart"** to stage the complete outfit bundle into your cart with one click!
 
-### Step 4: Test the Live Interactive Anthropometric Measurement Tuner
-- Click the **"Brand Sizing"** tab in the navigation bar.
-- **Drag the Sliders:**
-  - Adjust **Chest / Bust** from 30" to 48".
-  - Adjust **Waist** from 24" to 44".
-- Watch every single brand size (**Snitch, Rare Rabbit, Zara, Levi's, FabIndia, Marks & Spencer, Mango**) recalculate live in real time right before your eyes!
-- Notice the technical pattern explainer:
-  - **Snitch:** Explains why slim D2C cuts require sizing up for chest armhole clearance.
-  - **Zara India:** Explains why Euro regular fit avoids sleeve dragging.
-  - **Manyavar / FabIndia:** Explains the traditional 3-inch comfort ease for seating during family pujas.
-
-### Step 5: Test the Smart Instagram Influencer Look Replicator
-- Click the **"Insta Look Cloner"** tab in the navigation bar.
-- Review trending reels from Indian fashion creators (*Modern Desi Girl*, *Old Money Indian*, *Vanilla Girl Cozy Luxe*).
-- **Smart Closet Synergy:** Notice that for Ananya, the app alerts: *"Closet Synergy Detected! You already own the Black Resham Floral Embroidered Jacket! You only need the missing pieces to complete this look!"*
-- Click **"Smart Add Missing Pieces Only (Save ₹2,499)"** or **"Clone Look & Auto-Add All 3 to Cart (15% OFF)"**.
-
-### Step 6: Test Dynamic Cart Artefact Pairing & Unified Checkout
-- Click the **"Cart & Pairings"** button in the top right.
-- In the slide-out drawer:
-  - Adjust quantities (**+ / -**) and see real-time price recalculation with the auto-applied `AURAWARDROBE15` coupon.
-  - In the **Automated Matching Artefacts** section, observe that complementary accessories dynamically match the current cart items (e.g., Tan Leather Mojari Mules for kurtas; Bohemian Silver Jhumkas for female shrugs/palazzos) without any manual searching!
-  - Click **"+ Pair"** to add an artefact into the cart.
-  - Click **"Proceed to Unified 1-Click Order"** to launch the **Unified Dispatch Modal** showing:
-    - Bengaluru delivery address
-    - Multi-merchant split dispatch breakdown (Myntra Fast Logistics + Amazon Prime)
-    - Zero-Return Fit Guarantee certificate
-    - Click **"Confirm & Dispatch Unified Order"** to receive the instant order confirmation and tracking number!
-
-### Step 7: Test Photo Scan Simulator
-- Click **"Scan Photo"** in the top navigation bar.
-- Upload additional photos or click **"Execute Vision Audit"** to watch the multi-stage neural pipeline segment subjects and refresh the wardrobe health score.
+### Feature 4: Standardized & De-duplicated Wardrobe Cards
+- Click the **"Wardrobe"** tab.
+- Notice the streamlined, production-grade card layout (standardized 48-height image banner, compact badges, uniform metadata, and concise status diagnostics).
+- **View Mode Switcher:** Toggle between **"Grid View"** (3-column visual cards) and **"Compact List View"** (sleek row view for rapid inventory auditing).
+- **Interactive Triage:** Click **"Mark Replace"** or **"Mark Kept"** to update wardrobe health scores in real time.
 
 ---
 
@@ -75,13 +57,14 @@ npm run dev
 FashionCommerce/
 ├── src/
 │   ├── components/
-│   │   ├── Header.jsx                 # Navigation, active profile pill, cart counter
-│   │   ├── ProfileSelector.jsx        # Multi-subject switcher, anthropometrics
-│   │   ├── WardrobeAuditor.jsx        # Garment catalog, condition scorecards, custom add & delete
+│   │   ├── Header.jsx                 # Top bar with 3D Try-On tab, active profile pill, cart counter
+│   │   ├── ThreeDBodyTryOn.jsx        # Three.js 3D Virtual Try-On Studio (360° rotation, fit heatmap)
+│   │   ├── BrandSizingMatrix.jsx      # Biometric & anthropometric calibration tuner + photo size guesser
+│   │   ├── InstaTrendCloner.jsx       # Instagram Reel & YouTube Short link deconstructor
+│   │   ├── WardrobeAuditor.jsx        # Standardized e-commerce wardrobe cards with Grid/List toggle
 │   │   ├── DecisionFatigueReducer.jsx # 3-item Why Buy catalog, outfit permutation simulator, Myntra links
-│   │   ├── BrandSizingMatrix.jsx      # Interactive live measurement tuner across Indian brands
-│   │   ├── InstaTrendCloner.jsx       # Smart reel-to-cart bundle replicator with closet synergy
 │   │   ├── CartDrawer.jsx             # Dynamic cart drawer, artefact pairing & unified checkout
+│   │   ├── ProfileSelector.jsx        # Multi-subject switcher (Aditya vs. Ananya)
 │   │   └── PhotoScanModal.jsx         # Custom upload dropzone & vision pipeline simulator
 │   ├── data/
 │   │   └── wardrobeDatabase.js        # Master dataset with photo metadata & dynamic size algorithm
@@ -93,12 +76,5 @@ FashionCommerce/
 │   └── wardrobe_audit_summary.json    # CLI-generated structured audit export
 ├── scripts/
 │   └── wardrobe_analyzer.py           # Standalone Python CLI analysis tool
-├── docs/                              # Complete product & evaluation documentation
-│   ├── 1_EXECUTIVE_WRITEUP.md         # 3-page Strategy Dossier (Steps 1-4 & 6)
-│   ├── 2_PROMPT_NOTE.md               # 1-page Prompt Engineering Note
-│   ├── 3_TIME_LOG.md                  # Comprehensive Task Time Log
-│   ├── 4_USER_INTERVIEW_TRANSCRIPTS.md# 3 In-Depth User Interviews
-│   ├── 5_PROTOTYPE_WALKTHROUGH.md     # This review guide
-│   └── 6_AI_SESSION_LOGS.md           # AI Session audit trail
-└── package.json                       # React 18, Vite 5, Tailwind 3, Lucide Icons
+└── package.json                       # React 18, Vite 5, Tailwind 3, Three.js 0.160, Lucide Icons
 ```
