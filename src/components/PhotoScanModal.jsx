@@ -8,12 +8,14 @@ import {
   Layers, 
   Cpu, 
   ArrowRight,
-  ShieldCheck
+  ShieldCheck,
+  Image as ImageIcon
 } from 'lucide-react';
 
 export default function PhotoScanModal({ isOpen, onClose, onFinishScan }) {
   const [scanning, setScanning] = useState(false);
   const [scanStep, setScanStep] = useState(0);
+  const [customPhotos, setCustomPhotos] = useState([]);
 
   if (!isOpen) return null;
 
@@ -62,18 +64,35 @@ export default function PhotoScanModal({ isOpen, onClose, onFinishScan }) {
     }
   ];
 
+  const handleFileUpload = (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+
+    const newEntries = files.map((file, idx) => ({
+      id: `uploaded_${Date.now()}_${idx}`,
+      path: URL.createObjectURL(file),
+      detectedPerson: "New User Photo",
+      garment: file.name,
+      status: "Uploaded (Ready to Scan)"
+    }));
+
+    setCustomPhotos(prev => [...prev, ...newEntries]);
+  };
+
   const handleRunScan = () => {
     setScanning(true);
     setScanStep(1);
 
-    setTimeout(() => setScanStep(2), 700);
-    setTimeout(() => setScanStep(3), 1400);
-    setTimeout(() => setScanStep(4), 2100);
+    setTimeout(() => setScanStep(2), 600);
+    setTimeout(() => setScanStep(3), 1200);
+    setTimeout(() => setScanStep(4), 1800);
     setTimeout(() => {
       setScanning(false);
       onFinishScan();
-    }, 2800);
+    }, 2400);
   };
+
+  const totalPhotos = uploadedSamples.length + customPhotos.length;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -116,16 +135,16 @@ export default function PhotoScanModal({ isOpen, onClose, onFinishScan }) {
           <div>
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                Ingested Photos (6 Active Files Analyzed):
+                Ingested Photos ({totalPhotos} Active Files Analyzed):
               </span>
               <span className="text-xs text-emerald-600 font-bold flex items-center space-x-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>100% Ingested & Deconstructed</span>
+                <span>Ready for Neural Audit</span>
               </span>
             </div>
 
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2.5">
-              {uploadedSamples.map((sample) => (
+              {[...uploadedSamples, ...customPhotos].map((sample) => (
                 <div key={sample.id} className="relative group rounded-xl overflow-hidden border border-slate-200 bg-slate-100 aspect-square">
                   <img
                     src={sample.path}
@@ -138,6 +157,22 @@ export default function PhotoScanModal({ isOpen, onClose, onFinishScan }) {
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Custom Upload Dropzone */}
+            <div className="mt-3">
+              <label className="border-2 border-dashed border-slate-200 hover:border-slate-400 rounded-2xl p-4 flex flex-col items-center justify-center cursor-pointer bg-slate-50 hover:bg-slate-100 transition text-xs">
+                <Upload className="w-5 h-5 text-slate-400 mb-1" />
+                <span className="font-bold text-slate-700">Upload additional outfit or closet photos</span>
+                <span className="text-[10px] text-slate-400 mt-0.5">Supports JPG, PNG, WEBP from mobile or desktop</span>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+              </label>
             </div>
           </div>
 
@@ -202,7 +237,7 @@ export default function PhotoScanModal({ isOpen, onClose, onFinishScan }) {
         {/* Footer */}
         <div className="p-5 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
           <span className="text-xs text-slate-500">
-            Ready to re-audit catalog with calibrated parameters
+            {customPhotos.length > 0 ? `${customPhotos.length} new photos queued for analysis` : 'Ready to audit active photo stream'}
           </span>
 
           <div className="flex items-center space-x-3">
@@ -218,7 +253,7 @@ export default function PhotoScanModal({ isOpen, onClose, onFinishScan }) {
               className="px-5 py-2.5 rounded-xl text-xs font-bold bg-slate-900 text-white hover:bg-slate-800 transition shadow-md flex items-center space-x-2 disabled:opacity-50"
             >
               <Sparkles className="w-4 h-4 text-amber-400" />
-              <span>{scanning ? 'Running Vision Engine...' : 'Re-Run Computer Vision Scan'}</span>
+              <span>{scanning ? 'Running Neural Vision...' : 'Execute Vision Audit'}</span>
             </button>
           </div>
         </div>

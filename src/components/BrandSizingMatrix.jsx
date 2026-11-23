@@ -1,11 +1,25 @@
 import React, { useState } from 'react';
-import { Ruler, ShieldCheck, AlertCircle, Sparkles, Check, ChevronRight } from 'lucide-react';
+import { Ruler, ShieldCheck, AlertCircle, Sparkles, Check, ChevronRight, Sliders, RefreshCw } from 'lucide-react';
+import { calculateBrandSizes } from '../data/wardrobeDatabase';
 
 export default function BrandSizingMatrix({ profile }) {
-  const [selectedBrand, setSelectedBrand] = useState(Object.keys(profile.brandSizingFramework)[0]);
+  // Extract initial measurements from profile
+  const initialChest = parseInt(profile.gender === 'male' ? profile.bodyProportions.chest : profile.bodyProportions.bust) || (profile.gender === 'male' ? 40 : 34);
+  const initialWaist = parseInt(profile.bodyProportions.waist) || (profile.gender === 'male' ? 34 : 28);
 
-  const brands = Object.keys(profile.brandSizingFramework);
-  const brandData = profile.brandSizingFramework[selectedBrand];
+  const [chest, setChest] = useState(initialChest);
+  const [waist, setWaist] = useState(initialWaist);
+  const [selectedBrand, setSelectedBrand] = useState(profile.gender === 'male' ? 'Snitch' : 'Zara');
+
+  // Compute live brand sizing dynamically
+  const liveSizingFramework = calculateBrandSizes(profile.gender, chest, waist, profile.bodyProportions.height);
+  const brands = Object.keys(liveSizingFramework);
+  const currentBrandData = liveSizingFramework[selectedBrand] || liveSizingFramework[brands[0]];
+
+  const handleReset = () => {
+    setChest(initialChest);
+    setWaist(initialWaist);
+  };
 
   return (
     <div className="space-y-8">
@@ -26,29 +40,72 @@ export default function BrandSizingMatrix({ profile }) {
           </p>
         </div>
 
-        {/* Current Proportions Summary Bar */}
-        <div className="mt-6 p-4 rounded-2xl bg-slate-50 border border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-          <div>
-            <span className="text-slate-400 block text-[11px]">Height & Frame</span>
-            <span className="font-bold text-slate-900">{profile.bodyProportions.height}</span>
-            <span className="text-slate-500 block text-[10px]">{profile.bodyProportions.build}</span>
+        {/* INTERACTIVE MEASUREMENT TUNER */}
+        <div className="mt-6 p-5 rounded-2xl bg-slate-900 text-white border border-slate-800 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-800 gap-2">
+            <div className="flex items-center space-x-2 text-xs font-bold text-amber-400">
+              <Sliders className="w-4 h-4" />
+              <span>Interactive Anthropometric Tuner (Live Recalculation)</span>
+            </div>
+            <button
+              onClick={handleReset}
+              className="text-[11px] text-slate-400 hover:text-white flex items-center space-x-1 transition"
+            >
+              <RefreshCw className="w-3 h-3" />
+              <span>Reset to Profile Defaults</span>
+            </button>
           </div>
-          <div>
-            <span className="text-slate-400 block text-[11px]">Natural Chest / Bust</span>
-            <span className="font-bold text-slate-900">{profile.gender === 'male' ? profile.bodyProportions.chest : profile.bodyProportions.bust}</span>
-            <span className="text-slate-500 block text-[10px]">Circumference</span>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+            {/* Chest / Bust Slider */}
+            <div className="space-y-2">
+              <div className="flex justify-between font-semibold">
+                <span className="text-slate-300">{profile.gender === 'male' ? 'Chest Circumference' : 'Bust Circumference'}:</span>
+                <span className="text-amber-400 font-mono text-sm">{chest} inches</span>
+              </div>
+              <input
+                type="range"
+                min="30"
+                max="48"
+                value={chest}
+                onChange={(e) => setChest(parseInt(e.target.value))}
+                className="w-full accent-rose-500 cursor-pointer"
+              />
+              <div className="flex justify-between text-[10px] text-slate-400">
+                <span>30" (Petite / Slim)</span>
+                <span>38" (Regular)</span>
+                <span>48" (Broad / Plus)</span>
+              </div>
+            </div>
+
+            {/* Waist Slider */}
+            <div className="space-y-2">
+              <div className="flex justify-between font-semibold">
+                <span className="text-slate-300">Natural Waistline:</span>
+                <span className="text-amber-400 font-mono text-sm">{waist} inches</span>
+              </div>
+              <input
+                type="range"
+                min="24"
+                max="44"
+                value={waist}
+                onChange={(e) => setWaist(parseInt(e.target.value))}
+                className="w-full accent-emerald-500 cursor-pointer"
+              />
+              <div className="flex justify-between text-[10px] text-slate-400">
+                <span>24" (Extra Small)</span>
+                <span>32" (Medium)</span>
+                <span>44" (Extended)</span>
+              </div>
+            </div>
           </div>
-          <div>
-            <span className="text-slate-400 block text-[11px]">Natural Waist</span>
-            <span className="font-bold text-slate-900">{profile.bodyProportions.waist}</span>
-            <span className="text-slate-500 block text-[10px]">Mid-Rise Anchor</span>
-          </div>
-          <div>
-            <span className="text-slate-400 block text-[11px]">Inseam / Shoulders</span>
-            <span className="font-bold text-slate-900">{profile.gender === 'male' ? `Shoulder: ${profile.bodyProportions.shoulder}` : `Hip: ${profile.bodyProportions.hip}`}</span>
-            <span className="text-slate-500 block text-[10px]">Inseam: {profile.bodyProportions.inseam}</span>
+
+          <div className="text-[11px] text-slate-400 pt-2 flex items-center space-x-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Live calculating tailored cuts across {brands.length} Indian & International brands</span>
           </div>
         </div>
+
       </div>
 
       {/* Brand Tabs & Deep Fit Explainer */}
@@ -61,7 +118,7 @@ export default function BrandSizingMatrix({ profile }) {
           </span>
           {brands.map((brand) => {
             const isSelected = brand === selectedBrand;
-            const data = profile.brandSizingFramework[brand];
+            const data = liveSizingFramework[brand];
 
             return (
               <button
@@ -109,7 +166,7 @@ export default function BrandSizingMatrix({ profile }) {
               <div className="text-right">
                 <span className="text-[11px] text-slate-400 uppercase tracking-wider block">Recommended Size</span>
                 <span className="text-2xl font-black font-mono text-emerald-600">
-                  {brandData.predictedSize}
+                  {currentBrandData.predictedSize}
                 </span>
               </div>
             </div>
@@ -118,9 +175,9 @@ export default function BrandSizingMatrix({ profile }) {
             <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm leading-relaxed">
               <div className="flex items-center space-x-2 font-bold mb-1">
                 <Sparkles className="w-4 h-4 text-amber-600" />
-                <span>Technical Pattern Rationale</span>
+                <span>Technical Pattern Rationale (Chest {chest}", Waist {waist}")</span>
               </div>
-              <p>{brandData.fitRecommendation}</p>
+              <p>{currentBrandData.fitRecommendation}</p>
             </div>
 
             {/* Anthropometric Comparison Checklist */}

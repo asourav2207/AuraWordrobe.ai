@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Instagram, 
   Sparkles, 
@@ -8,12 +8,25 @@ import {
   Check, 
   ExternalLink,
   Layers,
-  Heart
+  Heart,
+  ShieldCheck,
+  CheckCircle2
 } from 'lucide-react';
 
-export default function InstaTrendCloner({ trends, currentGender, onAddBundleToCart }) {
-  // Filter trends by profile gender or prioritize gender
+export default function InstaTrendCloner({ trends, currentGender, onAddBundleToCart, onAddToCart }) {
+  // Filter trends by profile gender
   const filteredTrends = trends.filter(t => t.targetGender === currentGender);
+  const [selectedItemsMap, setSelectedItemsMap] = useState({});
+
+  const toggleItemSelection = (trendId, itemIdx) => {
+    setSelectedItemsMap(prev => {
+      const current = prev[trendId] || [0, 1, 2];
+      const next = current.includes(itemIdx)
+        ? current.filter(i => i !== itemIdx)
+        : [...current, itemIdx];
+      return { ...prev, [trendId]: next };
+    });
+  };
 
   return (
     <div className="space-y-8">
@@ -55,6 +68,9 @@ export default function InstaTrendCloner({ trends, currentGender, onAddBundleToC
       {/* Trends Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {filteredTrends.map((trend) => {
+          const selectedIndices = selectedItemsMap[trend.id] || trend.bundleItems.map((_, i) => i);
+          const hasOwnedPiece = !!trend.alreadyOwnsMatchingItem;
+
           return (
             <div
               key={trend.id}
@@ -93,47 +109,85 @@ export default function InstaTrendCloner({ trends, currentGender, onAddBundleToC
                   </div>
                 </div>
 
+                {/* Closet Match Alert */}
+                {hasOwnedPiece && (
+                  <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-bold block">Closet Synergy Detected!</span>
+                      <span className="text-[11px] text-emerald-800">
+                        You already own the <strong className="underline">{trend.alreadyOwnsMatchingItem.name}</strong> from your photos. You only need the missing pieces to complete this look!
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-2xl border border-slate-200">
-                  <strong className="text-slate-900">Wardrobe Match Note: </strong>
+                  <strong className="text-slate-900">Styling Rationale: </strong>
                   {trend.inspirationDesc}
                 </p>
 
-                {/* Bundle Items Breakdown */}
+                {/* Bundle Items Breakdown with Checkboxes */}
                 <div className="space-y-2 pt-1">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-                    Curated Look Bundle (3 Items):
-                  </span>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-bold text-slate-500 uppercase tracking-wider">
+                      Look Pieces ({trend.bundleItems.length} Items):
+                    </span>
+                    <span className="text-[11px] text-slate-400">Tap item to toggle</span>
+                  </div>
 
                   <div className="space-y-2">
-                    {trend.bundleItems.map((item, idx) => (
-                      <div
-                        key={idx}
-                        className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <span className="w-5 h-5 rounded-full bg-slate-900 text-white font-bold text-[10px] flex items-center justify-center">
-                            {idx + 1}
-                          </span>
-                          <div>
-                            <span className="font-bold text-slate-800 block">{item.name}</span>
-                            <span className="text-[10px] text-slate-400">{item.brand} • {item.store}</span>
+                    {trend.bundleItems.map((item, idx) => {
+                      const isSelected = selectedIndices.includes(idx);
+
+                      return (
+                        <div
+                          key={idx}
+                          onClick={() => toggleItemSelection(trend.id, idx)}
+                          className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between text-xs ${
+                            item.isOwned 
+                              ? 'bg-emerald-50/60 border-emerald-200' 
+                              : isSelected 
+                                ? 'bg-purple-50/50 border-purple-300' 
+                                : 'bg-slate-50 border-slate-200 opacity-60'
+                          }`}
+                        >
+                          <div className="flex items-center space-x-2.5">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => {}}
+                              className="w-4 h-4 rounded text-purple-600 accent-purple-600 pointer-events-none"
+                            />
+                            <div>
+                              <div className="flex items-center space-x-1.5">
+                                <span className="font-bold text-slate-900">{item.name}</span>
+                                {item.isOwned && (
+                                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-600 text-white">
+                                    IN CLOSET
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-[10px] text-slate-500">{item.brand} • {item.store}</span>
+                            </div>
+                          </div>
+
+                          <div className="text-right">
+                            <span className="font-bold text-slate-900">₹{item.price.toLocaleString('en-IN')}</span>
+                            <a
+                              href={item.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="block text-[10px] text-rose-600 hover:underline flex items-center justify-end space-x-0.5"
+                            >
+                              <span>Link</span>
+                              <ExternalLink className="w-2.5 h-2.5" />
+                            </a>
                           </div>
                         </div>
-
-                        <div className="text-right">
-                          <span className="font-bold text-slate-900">₹{item.price.toLocaleString('en-IN')}</span>
-                          <a
-                            href={item.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block text-[10px] text-rose-600 hover:underline flex items-center justify-end space-x-0.5"
-                          >
-                            <span>Link</span>
-                            <ExternalLink className="w-2.5 h-2.5" />
-                          </a>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -153,15 +207,38 @@ export default function InstaTrendCloner({ trends, currentGender, onAddBundleToC
 
               </div>
 
-              {/* 1-Click CTA */}
-              <div className="p-5 pt-0">
+              {/* CTAs */}
+              <div className="p-5 pt-0 space-y-2">
                 <button
                   onClick={() => onAddBundleToCart(trend)}
                   className="w-full py-3 px-4 bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 hover:from-rose-700 hover:to-purple-700 text-white rounded-2xl text-xs font-bold shadow-md hover:shadow-lg transition flex items-center justify-center space-x-2"
                 >
                   <ShoppingBag className="w-4 h-4 text-amber-300" />
-                  <span>Clone Look & Auto-Add All 3 to Cart</span>
+                  <span>Clone Look & Auto-Add All 3 to Cart (15% OFF)</span>
                 </button>
+
+                {hasOwnedPiece && (
+                  <button
+                    onClick={() => {
+                      // Add only non-owned items
+                      const missingItems = trend.bundleItems.filter(i => !i.isOwned);
+                      missingItems.forEach(item => {
+                        onAddToCart({
+                          id: `${trend.id}_${item.name}`,
+                          title: item.name,
+                          brand: item.brand,
+                          price: item.price,
+                          predictedSize: "Pre-Mapped Sizing",
+                          imageUrl: trend.heroImage
+                        });
+                      });
+                    }}
+                    className="w-full py-2.5 px-3 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 border border-emerald-300"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
+                    <span>Smart Add Missing Pieces Only (Save ₹{trend.alreadyOwnsMatchingItem.savingValue})</span>
+                  </button>
+                )}
               </div>
 
             </div>

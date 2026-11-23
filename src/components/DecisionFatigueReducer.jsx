@@ -11,11 +11,22 @@ import {
   Info,
   Layers,
   Percent,
-  Star
+  Star,
+  ChevronDown,
+  ChevronUp,
+  Plus
 } from 'lucide-react';
 
 export default function DecisionFatigueReducer({ profile, onAddToCart, onPairArtifacts }) {
   const [activeFilter, setActiveFilter] = useState('ALL');
+  const [expandedPermutations, setExpandedPermutations] = useState({});
+
+  const togglePermutations = (recId) => {
+    setExpandedPermutations(prev => ({
+      ...prev,
+      [recId]: !prev[recId]
+    }));
+  };
 
   const filteredRecs = profile.recommendations.filter(rec => {
     if (activeFilter === 'ALL') return true;
@@ -81,6 +92,8 @@ export default function DecisionFatigueReducer({ profile, onAddToCart, onPairArt
       {/* Recommended Products Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {filteredRecs.map((rec) => {
+          const isExpanded = !!expandedPermutations[rec.id];
+
           return (
             <div
               key={rec.id}
@@ -167,6 +180,47 @@ export default function DecisionFatigueReducer({ profile, onAddToCart, onPairArt
                       ))}
                     </ul>
                   </div>
+
+                  {/* OUTFIT PERMUTATIONS SIMULATOR (Solves Decision Fatigue) */}
+                  {rec.permutations && rec.permutations.length > 0 && (
+                    <div className="mt-4 pt-3 border-t border-slate-100">
+                      <button
+                        onClick={() => togglePermutations(rec.id)}
+                        className="w-full flex items-center justify-between p-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-900 text-xs font-bold transition border border-purple-200/80"
+                      >
+                        <div className="flex items-center space-x-1.5">
+                          <Layers className="w-3.5 h-3.5 text-purple-600" />
+                          <span>Simulate {rec.permutations.length} Outfits With Your Closet</span>
+                        </div>
+                        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      </button>
+
+                      {isExpanded && (
+                        <div className="mt-2.5 space-y-2.5 p-3 rounded-2xl bg-purple-50/50 border border-purple-200/60 animate-in fade-in duration-200">
+                          {rec.permutations.map((perm, pIdx) => (
+                            <div key={pIdx} className="bg-white p-3 rounded-xl border border-purple-100 shadow-sm text-xs space-y-1.5">
+                              <div className="flex items-center justify-between">
+                                <span className="font-bold text-slate-900">{perm.title}</span>
+                                <span className="text-[10px] bg-purple-100 text-purple-800 font-semibold px-2 py-0.5 rounded-full">
+                                  {perm.occasion}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-slate-600 leading-tight">
+                                {perm.description}
+                              </p>
+                              <div className="flex flex-wrap gap-1 pt-1">
+                                {perm.pieces.map((p, idx) => (
+                                  <span key={idx} className="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-medium border border-slate-200">
+                                    {p}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {/* Demographic & In-Cart Social Proof */}
                   <div className="mt-4 p-3 rounded-2xl bg-gradient-to-r from-rose-50 to-orange-50 border border-rose-200/60">

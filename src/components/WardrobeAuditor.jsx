@@ -11,22 +11,87 @@ import {
   Layers, 
   Share2,
   Calendar,
-  ShieldAlert
+  ShieldAlert,
+  Search,
+  Plus,
+  X,
+  RefreshCw,
+  Archive
 } from 'lucide-react';
 
-export default function WardrobeAuditor({ profile, onTriggerUpgrade, onSwitchToRecommendations }) {
+export default function WardrobeAuditor({ 
+  profile, 
+  items, 
+  onUpdateItemStatus, 
+  onDeleteItem, 
+  onAddNewItem, 
+  onSwitchToRecommendations 
+}) {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
+  const [selectedOccasion, setSelectedOccasion] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
   const [previewPhoto, setPreviewPhoto] = useState(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+
+  // New item form state
+  const [newItemName, setNewItemName] = useState('');
+  const [newItemCategory, setNewItemCategory] = useState('Tops');
+  const [newItemFabric, setNewItemFabric] = useState('100% Breathable Cotton');
+  const [newItemOccasion, setNewItemOccasion] = useState('Smart Casual');
+  const [newItemColor, setNewItemColor] = useState('Beige / Sand');
+  const [newItemCondition, setNewItemCondition] = useState(9.0);
 
   const categories = ['All', 'Tops', 'Bottoms', 'Layering / Outerwear', 'Ethnic & Festive', 'Winterwear / Loungewear'];
   const statuses = ['All', 'KEEP', 'REPLACE', 'ADD'];
+  const occasions = ['All', 'Smart Casual / Office', 'Weekend Casual', 'Festive Occasion', 'Evening Social', 'Winterwear / Travel'];
 
-  const filteredItems = profile.items.filter((item) => {
+  // Current active items
+  const activeItems = items || profile.items;
+
+  const filteredItems = activeItems.filter((item) => {
     const matchesCategory = selectedCategory === 'All' || item.category.toLowerCase().includes(selectedCategory.toLowerCase());
     const matchesStatus = selectedStatus === 'All' || item.status === selectedStatus;
-    return matchesCategory && matchesStatus;
+    const matchesOccasion = selectedOccasion === 'All' || (item.wardrobeType && item.wardrobeType.toLowerCase().includes(selectedOccasion.toLowerCase().split('/')[0].trim()));
+    const matchesSearch = searchQuery === '' || 
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      item.clothType.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.color.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesStatus && matchesOccasion && matchesSearch;
   });
+
+  const keepCount = activeItems.filter(i => i.status === 'KEEP').length;
+  const replaceCount = activeItems.filter(i => i.status === 'REPLACE').length;
+  const addCount = 2; // strategic gaps
+
+  const handleCreateItem = (e) => {
+    e.preventDefault();
+    if (!newItemName.trim()) return;
+
+    const created = {
+      id: `custom_${Date.now()}`,
+      name: newItemName,
+      category: newItemCategory,
+      subCategory: "Custom Garment",
+      clothType: newItemFabric,
+      wardrobeType: newItemOccasion,
+      color: newItemColor,
+      conditionScore: parseFloat(newItemCondition),
+      conditionLabel: newItemCondition >= 8.5 ? "Pristine / Crisp" : newItemCondition >= 7 ? "Good Condition" : "Moderate Wear",
+      wearFrequency: "Regular (3-4 times/month)",
+      detectedInPhotos: [profile.avatar],
+      status: "KEEP",
+      statusReason: "User manually inventoried into active wardrobe rotation.",
+      pairingScore: 90,
+      currentPairs: ["Black Tapered Chinos", "Denim Jeans"],
+      brandEstimate: "Custom / Retail",
+      retailValueEst: "₹1,999"
+    };
+
+    onAddNewItem(created);
+    setShowAddModal(false);
+    setNewItemName('');
+  };
 
   return (
     <div className="space-y-6">
@@ -39,7 +104,7 @@ export default function WardrobeAuditor({ profile, onTriggerUpgrade, onSwitchToR
               {profile.name}'s Digitized Wardrobe Audit
             </h2>
             <span className="text-xs bg-slate-100 text-slate-700 font-semibold px-2.5 py-0.5 rounded-full border border-slate-300">
-              {profile.items.length} Extracted Garments
+              {activeItems.length} Extracted Garments
             </span>
           </div>
           <p className="text-sm text-slate-500 mt-1">
@@ -47,28 +112,68 @@ export default function WardrobeAuditor({ profile, onTriggerUpgrade, onSwitchToR
           </p>
         </div>
 
-        {/* Quick Triage Counts */}
+        {/* Quick Triage Counts & Add Garment CTA */}
         <div className="flex items-center space-x-3">
           <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-800 rounded-xl border border-emerald-200 text-xs font-bold">
             <CheckCircle className="w-4 h-4 text-emerald-600" />
-            <span>{profile.wardrobeHealth.keepCount} Keep</span>
+            <span>{keepCount} Keep</span>
           </div>
           <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-amber-50 text-amber-800 rounded-xl border border-amber-200 text-xs font-bold">
             <AlertTriangle className="w-4 h-4 text-amber-600" />
-            <span>{profile.wardrobeHealth.replaceCount} Replace</span>
+            <span>{replaceCount} Replace</span>
           </div>
           <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-blue-50 text-blue-800 rounded-xl border border-blue-200 text-xs font-bold">
             <PlusCircle className="w-4 h-4 text-blue-600" />
-            <span>{profile.wardrobeHealth.addCount} Gaps</span>
+            <span>{addCount} Gaps</span>
           </div>
+
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-sm transition"
+          >
+            <Plus className="w-3.5 h-3.5 text-amber-400" />
+            <span>+ Add Garment</span>
+          </button>
         </div>
       </div>
 
-      {/* Filter Toolbar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Filter & Search Toolbar */}
+      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
         
+        {/* Search & Status Row */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="relative w-full sm:w-80">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search by fabric, color, or garment..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500"
+            />
+          </div>
+
+          {/* Status Filter */}
+          <div className="flex items-center space-x-2 self-start sm:self-auto">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Status:</span>
+            {statuses.map((st) => (
+              <button
+                key={st}
+                onClick={() => setSelectedStatus(st)}
+                className={`text-xs px-2.5 py-1 rounded-lg font-bold transition ${
+                  selectedStatus === st
+                    ? st === 'KEEP' ? 'bg-emerald-600 text-white' : st === 'REPLACE' ? 'bg-amber-600 text-white' : 'bg-slate-900 text-white'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                {st}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Category Pills */}
-        <div className="flex items-center space-x-2 overflow-x-auto pb-1 md:pb-0">
+        <div className="flex items-center space-x-2 overflow-x-auto pb-1 border-t border-slate-100 pt-3">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center space-x-1 mr-1">
             <Filter className="w-3.5 h-3.5" />
             <span>Category:</span>
@@ -88,24 +193,6 @@ export default function WardrobeAuditor({ profile, onTriggerUpgrade, onSwitchToR
           ))}
         </div>
 
-        {/* Status Filter */}
-        <div className="flex items-center space-x-2">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Status:</span>
-          {statuses.map((st) => (
-            <button
-              key={st}
-              onClick={() => setSelectedStatus(st)}
-              className={`text-xs px-2.5 py-1 rounded-lg font-bold transition ${
-                selectedStatus === st
-                  ? st === 'KEEP' ? 'bg-emerald-600 text-white' : st === 'REPLACE' ? 'bg-amber-600 text-white' : 'bg-slate-900 text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              {st}
-            </button>
-          ))}
-        </div>
-
       </div>
 
       {/* Item Cards Grid */}
@@ -113,7 +200,7 @@ export default function WardrobeAuditor({ profile, onTriggerUpgrade, onSwitchToR
         {filteredItems.map((item) => {
           const isKeep = item.status === 'KEEP';
           const isReplace = item.status === 'REPLACE';
-          const mainPhoto = item.detectedInPhotos[0];
+          const mainPhoto = item.detectedInPhotos[0] || profile.avatar;
 
           return (
             <div
@@ -216,7 +303,7 @@ export default function WardrobeAuditor({ profile, onTriggerUpgrade, onSwitchToR
                       Current In-Closet Pairings:
                     </span>
                     <div className="flex flex-wrap gap-1.5">
-                      {item.currentPairs.map((pair, idx) => (
+                      {item.currentPairs && item.currentPairs.map((pair, idx) => (
                         <span key={idx} className="text-[11px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-lg border border-slate-200">
                           {pair}
                         </span>
@@ -225,17 +312,35 @@ export default function WardrobeAuditor({ profile, onTriggerUpgrade, onSwitchToR
                   </div>
                 </div>
 
-                {/* Card Action Footer */}
+                {/* Card Action Footer with Functional Status Toggle & Delete */}
                 <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-                  <div className="text-xs">
-                    <span className="text-slate-400 block text-[10px]">Estimated Value</span>
-                    <span className="font-bold text-slate-900">{item.retailValueEst}</span>
+                  <div className="flex items-center space-x-2">
+                    {/* Toggle Status Button */}
+                    <button
+                      onClick={() => onUpdateItemStatus(item.id, isReplace ? 'KEEP' : 'REPLACE')}
+                      className={`text-[11px] font-bold px-2 py-1 rounded-lg border transition ${
+                        isReplace 
+                          ? 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100' 
+                          : 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100'
+                      }`}
+                      title="Click to toggle Keep / Replace triage"
+                    >
+                      {isReplace ? 'Mark as Kept' : 'Mark to Replace'}
+                    </button>
+
+                    <button
+                      onClick={() => onDeleteItem(item.id)}
+                      className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition"
+                      title="Retire / Archive item from closet"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
 
                   {isReplace ? (
                     <button
                       onClick={onSwitchToRecommendations}
-                      className="px-3.5 py-1.5 bg-gradient-to-r from-amber-500 to-rose-600 text-white rounded-xl text-xs font-bold shadow-md hover:from-amber-600 hover:to-rose-700 transition flex items-center space-x-1"
+                      className="px-3 py-1.5 bg-gradient-to-r from-amber-500 to-rose-600 text-white rounded-xl text-xs font-bold shadow-md hover:from-amber-600 hover:to-rose-700 transition flex items-center space-x-1"
                     >
                       <Sparkles className="w-3.5 h-3.5" />
                       <span>View Replacements</span>
@@ -245,7 +350,7 @@ export default function WardrobeAuditor({ profile, onTriggerUpgrade, onSwitchToR
                       onClick={onSwitchToRecommendations}
                       className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition flex items-center space-x-1"
                     >
-                      <span>Find Matching Gap</span>
+                      <span>Find Gaps</span>
                     </button>
                   )}
                 </div>
@@ -255,6 +360,114 @@ export default function WardrobeAuditor({ profile, onTriggerUpgrade, onSwitchToR
           );
         })}
       </div>
+
+      {/* Modal: Add Custom Garment */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <h3 className="font-bold text-base text-slate-900">Add Garment to {profile.name}'s Closet</h3>
+              <button onClick={() => setShowAddModal(false)} className="p-1 text-slate-400 hover:text-slate-600 rounded-lg">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateItem} className="space-y-3 text-xs">
+              <div>
+                <label className="font-bold text-slate-700 block mb-1">Garment Name</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Olive Utility Overshirt"
+                  value={newItemName}
+                  onChange={(e) => setNewItemName(e.target.value)}
+                  className="w-full p-2.5 rounded-xl border border-slate-200 text-xs"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Category</label>
+                  <select
+                    value={newItemCategory}
+                    onChange={(e) => setNewItemCategory(e.target.value)}
+                    className="w-full p-2 rounded-xl border border-slate-200 text-xs bg-white"
+                  >
+                    <option value="Tops">Tops</option>
+                    <option value="Bottoms">Bottoms</option>
+                    <option value="Layering / Outerwear">Layering</option>
+                    <option value="Ethnic & Festive">Ethnic</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Occasion</label>
+                  <select
+                    value={newItemOccasion}
+                    onChange={(e) => setNewItemOccasion(e.target.value)}
+                    className="w-full p-2 rounded-xl border border-slate-200 text-xs bg-white"
+                  >
+                    <option value="Smart Casual / Office">Smart Casual</option>
+                    <option value="Weekend Casual">Weekend</option>
+                    <option value="Festive Occasion">Festive</option>
+                    <option value="Evening Social">Evening</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="font-bold text-slate-700 block mb-1">Fabric & Weave</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Slub Linen / Twill Cotton"
+                  value={newItemFabric}
+                  onChange={(e) => setNewItemFabric(e.target.value)}
+                  className="w-full p-2.5 rounded-xl border border-slate-200 text-xs"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Color Palette</label>
+                  <input
+                    type="text"
+                    value={newItemColor}
+                    onChange={(e) => setNewItemColor(e.target.value)}
+                    className="w-full p-2 rounded-xl border border-slate-200 text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Condition Score (1-10)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="1"
+                    max="10"
+                    value={newItemCondition}
+                    onChange={(e) => setNewItemCondition(e.target.value)}
+                    className="w-full p-2 rounded-xl border border-slate-200 text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-3 flex items-center justify-end space-x-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-slate-900 text-white rounded-xl font-bold shadow-md hover:bg-slate-800"
+                >
+                  Save to Wardrobe
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Lightbox Modal for Photo Inspection */}
       {previewPhoto && (

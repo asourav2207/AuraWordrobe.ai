@@ -13,16 +13,28 @@ import { Sparkles, ShieldCheck, ShoppingBag, ArrowRight } from 'lucide-react';
 export default function App() {
   const [activeProfileId, setActiveProfileId] = useState('user_aditya');
   const [activeTab, setActiveTab] = useState('wardrobe');
+  
+  // Dynamic per-profile wardrobe state so users can add, toggle, and delete items
+  const [wardrobeState, setWardrobeState] = useState(() => {
+    const initialMap = {};
+    wardrobeDatabase.profiles.forEach(p => {
+      initialMap[p.id] = [...p.items];
+    });
+    return initialMap;
+  });
+
   const [cartItems, setCartItems] = useState([
     {
       id: "init_item",
       title: "Breathable Sand Beige Textured Overshirt",
       brand: "Snitch",
       price: 1499,
+      quantity: 1,
       selectedSize: "Size L (Snitch)",
       imageUrl: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&auto=format&fit=crop&q=80"
     }
   ]);
+
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isScanModalOpen, setIsScanModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
@@ -35,25 +47,40 @@ export default function App() {
   };
 
   const currentProfile = wardrobeDatabase.profiles.find(p => p.id === activeProfileId) || wardrobeDatabase.profiles[0];
+  const currentItems = wardrobeState[activeProfileId] || currentProfile.items;
 
+  // Add to Cart
   const handleAddToCart = (product, selectedSize) => {
-    setCartItems(prev => [
-      ...prev,
-      {
-        ...product,
-        selectedSize: selectedSize || product.predictedSize
-      }
-    ]);
-    showToast(`Added ${product.title || product.name} to cart with size ${selectedSize || product.predictedSize}!`);
+    const existingIdx = cartItems.findIndex(i => (i.title === product.title || i.name === product.title));
+    if (existingIdx >= 0) {
+      setCartItems(prev => {
+        const next = [...prev];
+        next[existingIdx].quantity = (next[existingIdx].quantity || 1) + 1;
+        return next;
+      });
+      showToast(`Updated quantity for ${product.title || product.name} in cart!`);
+    } else {
+      setCartItems(prev => [
+        ...prev,
+        {
+          ...product,
+          quantity: 1,
+          selectedSize: selectedSize || product.predictedSize || "Pre-Mapped Sizing"
+        }
+      ]);
+      showToast(`Added ${product.title || product.name} to cart (${selectedSize || product.predictedSize || 'Pre-Mapped'})!`);
+    }
     setIsCartOpen(true);
   };
 
+  // Add Complete Instagram Bundle to Cart
   const handleAddBundleToCart = (trend) => {
     const itemsToAdd = trend.bundleItems.map((item, idx) => ({
-      id: `${trend.id}_${idx}`,
+      id: `${trend.id}_${idx}_${Date.now()}`,
       title: item.name,
       brand: item.brand,
       price: item.price,
+      quantity: 1,
       selectedSize: "Pre-Mapped Sizing",
       imageUrl: trend.heroImage
     }));
@@ -63,6 +90,7 @@ export default function App() {
     setIsCartOpen(true);
   };
 
+  // Add Paired Complementary Artefact
   const handleAddArtefactToCart = (artefact) => {
     setCartItems(prev => [
       ...prev,
@@ -71,6 +99,7 @@ export default function App() {
         title: artefact.name,
         brand: artefact.brand,
         price: artefact.price,
+        quantity: 1,
         selectedSize: "Standard / Free Size",
         imageUrl: artefact.imageUrl
       }
@@ -78,8 +107,56 @@ export default function App() {
     showToast(`Paired artefact ${artefact.name} added to cart!`);
   };
 
+  // Cart Management
   const handleRemoveFromCart = (index) => {
     setCartItems(prev => prev.filter((_, idx) => idx !== index));
+    showToast("Item removed from cart");
+  };
+
+  const handleUpdateQuantity = (index, newQty) => {
+    setCartItems(prev => {
+      const next = [...prev];
+      next[index].quantity = newQty;
+      return next;
+    });
+  };
+
+  // Wardrobe Management
+  const handleUpdateItemStatus = (itemId, newStatus) => {
+    setWardrobeState(prev => {
+      const currentList = prev[activeProfileId] || [];
+      const updatedList = currentList.map(item => {
+        if (item.id === itemId) {
+          return {
+            ...item,
+            status: newStatus,
+            statusReason: newStatus === 'KEEP' 
+              ? "Re-verified as active wardrobe rotation staple." 
+              : "Marked for replacement due to visible fabric degradation."
+          };
+        }
+        return item;
+      });
+      return { ...prev, [activeProfileId]: updatedList };
+    });
+    showToast(`Item status updated to ${newStatus}`);
+  };
+
+  const handleDeleteItem = (itemId) => {
+    setWardrobeState(prev => {
+      const currentList = prev[activeProfileId] || [];
+      const updatedList = currentList.filter(item => item.id !== itemId);
+      return { ...prev, [activeProfileId]: updatedList };
+    });
+    showToast("Item retired and archived from closet");
+  };
+
+  const handleAddNewItem = (newItem) => {
+    setWardrobeState(prev => {
+      const currentList = prev[activeProfileId] || [];
+      return { ...prev, [activeProfileId]: [newItem, ...currentList] };
+    });
+    showToast(`Added ${newItem.name} to ${currentProfile.name}'s digitized wardrobe!`);
   };
 
   return (
@@ -97,7 +174,7 @@ export default function App() {
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        cartCount={cartItems.length}
+        cartCount={cartItems.reduce((acc, i) => acc + (i.quantity || 1), 0)}
         onOpenCart={() => setIsCartOpen(true)}
         activeProfile={currentProfile}
         onOpenScanModal={() => setIsScanModalOpen(true)}
@@ -120,6 +197,10 @@ export default function App() {
         {activeTab === 'wardrobe' && (
           <WardrobeAuditor
             profile={currentProfile}
+            items={currentItems}
+            onUpdateItemStatus={handleUpdateItemStatus}
+            onDeleteItem={handleDeleteItem}
+            onAddNewItem={handleAddNewItem}
             onSwitchToRecommendations={() => setActiveTab('recommendations')}
           />
         )}
@@ -138,6 +219,7 @@ export default function App() {
             trends={wardrobeDatabase.instagramTrends}
             currentGender={currentProfile.gender}
             onAddBundleToCart={handleAddBundleToCart}
+            onAddToCart={handleAddToCart}
           />
         )}
 
@@ -150,12 +232,13 @@ export default function App() {
 
       </main>
 
-      {/* Cart Drawer with Automated Pairing Engine */}
+      {/* Cart Drawer with Dynamic Artefact Pairing Engine & Checkout Modal */}
       <CartDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         cartItems={cartItems}
         onRemoveItem={handleRemoveFromCart}
+        onUpdateQuantity={handleUpdateQuantity}
         onAddArtefactToCart={handleAddArtefactToCart}
         profile={currentProfile}
       />

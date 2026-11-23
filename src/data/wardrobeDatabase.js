@@ -1,3 +1,137 @@
+export const calculateBrandSizes = (gender, chest, waist, height) => {
+  const chestNum = parseInt(chest) || (gender === 'male' ? 40 : 34);
+  const waistNum = parseInt(waist) || (gender === 'male' ? 34 : 28);
+
+  if (gender === 'male') {
+    let snitchSize = 'M';
+    if (chestNum <= 37) snitchSize = 'S';
+    else if (chestNum <= 39) snitchSize = 'M';
+    else if (chestNum <= 41) snitchSize = 'L';
+    else if (chestNum <= 43) snitchSize = 'XL';
+    else snitchSize = 'XXL';
+
+    let rareRabbitSize = '38 / M';
+    if (chestNum <= 37) rareRabbitSize = '36 / S';
+    else if (chestNum <= 39) rareRabbitSize = '38 / M';
+    else if (chestNum <= 41) rareRabbitSize = '40 / L';
+    else if (chestNum <= 43) rareRabbitSize = '42 / XL';
+    else rareRabbitSize = '44 / XXL';
+
+    let zaraSize = 'S';
+    if (chestNum <= 38) zaraSize = 'S';
+    else if (chestNum <= 41) zaraSize = 'M';
+    else if (chestNum <= 44) zaraSize = 'L';
+    else zaraSize = 'XL';
+
+    let levisSize = `${waistNum}W x 32L`;
+
+    let ethnicSize = '38 / S';
+    if (chestNum <= 37) ethnicSize = '38 / S';
+    else if (chestNum <= 40) ethnicSize = '40 / M';
+    else if (chestNum <= 43) ethnicSize = '42 / L';
+    else ethnicSize = '44 / XL';
+
+    let msSize = 'M (Regular)';
+    if (chestNum <= 38) msSize = 'S (Regular)';
+    else if (chestNum <= 41) msSize = 'M (Regular)';
+    else if (chestNum <= 44) msSize = 'L (Regular)';
+    else msSize = 'XL (Regular)';
+
+    return {
+      "Snitch": {
+        predictedSize: snitchSize,
+        fitRecommendation: `Slim Athletic Pattern — For a ${chestNum}" chest, Size ${snitchSize} gives clean shoulder alignment without button gaping.`,
+        fitConfidence: 94
+      },
+      "Rare Rabbit": {
+        predictedSize: rareRabbitSize,
+        fitRecommendation: `Tailored Slim — Chest ${chestNum}" matches ${rareRabbitSize}; high armhole allows sharp posture.`,
+        fitConfidence: 92
+      },
+      "Zara India": {
+        predictedSize: zaraSize,
+        fitRecommendation: `Euro Regular Fit — Size ${zaraSize} provides modern torso drape without excessive sleeve length.`,
+        fitConfidence: 89
+      },
+      "Levi's": {
+        predictedSize: levisSize,
+        fitRecommendation: `511 Slim or 512 Tapered — Mid-rise ${waistNum} waistband matches your natural waist without gap.`,
+        fitConfidence: 96
+      },
+      "Manyavar / FabIndia": {
+        predictedSize: ethnicSize,
+        fitRecommendation: `Ethnic Regular — Garment chest allows 3 inches of traditional ease over your ${chestNum}" chest for festive seating.`,
+        fitConfidence: 95
+      },
+      "Marks & Spencer": {
+        predictedSize: msSize,
+        fitRecommendation: `British Standard Cut — True to size comfort fit for ${chestNum}" chest.`,
+        fitConfidence: 91
+      }
+    };
+  } else {
+    // Female
+    let bustNum = chestNum;
+    let zaraSize = 'S';
+    if (bustNum <= 32) zaraSize = 'XS';
+    else if (bustNum <= 34) zaraSize = 'S';
+    else if (bustNum <= 37) zaraSize = 'M';
+    else zaraSize = 'L';
+
+    let mangoSize = 'XS';
+    if (bustNum <= 33) mangoSize = 'XS';
+    else if (bustNum <= 35) mangoSize = 'S';
+    else if (bustNum <= 38) mangoSize = 'M';
+    else mangoSize = 'L';
+
+    let roadsterSize = 'M';
+    if (bustNum <= 32) roadsterSize = 'S';
+    else if (bustNum <= 35) roadsterSize = 'M';
+    else if (bustNum <= 38) roadsterSize = 'L';
+    else roadsterSize = 'XL';
+
+    let ethnicSize = 'XS / 32';
+    if (bustNum <= 33) ethnicSize = 'XS / 32';
+    else if (bustNum <= 35) ethnicSize = 'S / 34';
+    else if (bustNum <= 38) ethnicSize = 'M / 36';
+    else ethnicSize = 'L / 38';
+
+    let westsideSize = 'S';
+    if (bustNum <= 33) westsideSize = 'XS';
+    else if (bustNum <= 35) westsideSize = 'S';
+    else if (bustNum <= 38) westsideSize = 'M';
+    else westsideSize = 'L';
+
+    return {
+      "Zara": {
+        predictedSize: `${zaraSize} (Tops) / ${waistNum <= 27 ? '26' : waistNum <= 29 ? '28' : '30'} EU 36 (Bottoms)`,
+        fitRecommendation: `Standard ${zaraSize} provides tailored shoulders without sleeve length dragging past wrist.`,
+        fitConfidence: 95
+      },
+      "Mango": {
+        predictedSize: mangoSize,
+        fitRecommendation: `Relaxed European cut; Size ${mangoSize} provides fluid drape over t-shirts and camis.`,
+        fitConfidence: 91
+      },
+      "Myntra Roadster / Tokyo Talkies": {
+        predictedSize: roadsterSize,
+        fitRecommendation: `Indian fast fashion cuts run 1 size smaller in armhole depth; Size ${roadsterSize} prevents chest pull.`,
+        fitConfidence: 93
+      },
+      "FabIndia / Biba / W": {
+        predictedSize: ethnicSize,
+        fitRecommendation: `Traditional ethnic sizing has significant ease; Size ${ethnicSize} gives a neat, non-swamping fit.`,
+        fitConfidence: 97
+      },
+      "Westside (Nuon / Wardrobe)": {
+        predictedSize: westsideSize,
+        fitRecommendation: `Tailored for contemporary Indian urban proportions, true to size.`,
+        fitConfidence: 94
+      }
+    };
+  }
+};
+
 export const wardrobeDatabase = {
   profiles: [
     {
@@ -18,38 +152,7 @@ export const wardrobeDatabase = {
         shoulder: "18 inches",
         inseam: "31 inches"
       },
-      brandSizingFramework: {
-        "Snitch": {
-          predictedSize: "L",
-          fitRecommendation: "Slim / Tapered Fit — Snitch runs snug in chest; Size L gives clean shoulder alignment without chest pull.",
-          fitConfidence: 94
-        },
-        "Rare Rabbit": {
-          predictedSize: "40 / L",
-          fitRecommendation: "Tailored Slim — Chest 40 matches exactly; high armhole allows sharp posture.",
-          fitConfidence: 92
-        },
-        "Zara India": {
-          predictedSize: "M",
-          fitRecommendation: "Regular Fit — Euro chest 39-41 provides modern drape; Size L sleeves would be 1.5 inches too long.",
-          fitConfidence: 89
-        },
-        "Levi's": {
-          predictedSize: "34W x 32L",
-          fitRecommendation: "511 Slim or 512 Tapered — Mid-rise 34 natural waist prevents waist gap while allowing thigh room.",
-          fitConfidence: 96
-        },
-        "Manyavar / FabIndia": {
-          predictedSize: "40 (Medium)",
-          fitRecommendation: "Ethnic Regular — Garment chest 43 inches allows 3 inches of traditional ease for festive movement.",
-          fitConfidence: 95
-        },
-        "Marks & Spencer": {
-          predictedSize: "M (Regular Fit)",
-          fitRecommendation: "British Standard — True to size 40 inch chest, relaxed torso cut.",
-          fitConfidence: 91
-        }
-      },
+      brandSizingFramework: calculateBrandSizes('male', 40, 34, "5'9\""),
       wardrobeHealth: {
         healthScore: 78,
         totalItemsDetected: 6,
@@ -202,9 +305,29 @@ export const wardrobeDatabase = {
             returnsRate: "Only 3.8% return rate (industry avg: 32%)",
             socialSentiment: "Ranked #1 Top-Rated Layer on Myntra for young working men."
           },
+          permutations: [
+            {
+              title: "Smart Casual Office Hybrid",
+              pieces: ["Sand Beige Overshirt (Unbuttoned)", "Navy Pique Polo (#1)", "Jet Black Chinos (#6)"],
+              description: "Provides sharp color separation between dark inner and outerwear. Perfect for sprint reviews and Indiranagar dinners.",
+              occasion: "Office & Evening Dining"
+            },
+            {
+              title: "Weekend Cafe & Travel",
+              pieces: ["Sand Beige Overshirt", "White Inner Tee", "Medium-Wash Blue Jeans (#5)"],
+              description: "Relaxed street-style silhouette with rolled cuffs. Breathable cotton weave keeps you comfortable in midday traffic.",
+              occasion: "Weekend Chill"
+            },
+            {
+              title: "Contemporary Fusion Layer",
+              pieces: ["Sand Beige Overshirt", "Navy Slub Linen Kurta (#4)", "Black Chinos (#6)"],
+              description: "Earthy beige layered over rich indigo kurta creates a distinguished modern Indian aesthetic.",
+              occasion: "Festive Evening"
+            }
+          ],
           matchingArtefacts: [
-            { name: "Minimalist Tan Suede Loafers", price: 2199, brand: "Red Tape / Woodland" },
-            { name: "Matte Olive Canvas Belt", price: 599, brand: "Wrogn" }
+            { id: "art_tan_loafers", name: "Minimalist Tan Suede Loafers", price: 2199, brand: "Red Tape / Woodland", imageUrl: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&auto=format&fit=crop&q=80" },
+            { id: "art_canvas_belt", name: "Matte Olive Canvas Belt", price: 599, brand: "Wrogn", imageUrl: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&auto=format&fit=crop&q=80" }
           ]
         },
         {
@@ -232,9 +355,23 @@ export const wardrobeDatabase = {
             returnsRate: "4.1% return rate",
             socialSentiment: "Praised in 400+ reviews for wrinkle-resistant slub texture."
           },
+          permutations: [
+            {
+              title: "Earthy Weekend Outdoor",
+              pieces: ["Sage Green Linen Shirt", "Medium-Wash Blue Jeans (#5)", "White Leather Sneakers"],
+              description: "Replaces the worn plaid shirt with an organic, subtle sage hue that flatters Indian skin tones.",
+              occasion: "Weekend Day Out"
+            },
+            {
+              title: "Cocktail Evening",
+              pieces: ["Sage Green Linen Shirt", "Jet Black Chinos (#6)", "Dark Brown Belt"],
+              description: "Clean tucked-in look with collar unbuttoned two buttons for an effortless European drape.",
+              occasion: "Date Night"
+            }
+          ],
           matchingArtefacts: [
-            { name: "Off-White Relaxed Cotton Chinos", price: 1799, brand: "Snitch" },
-            { name: "Handcrafted Tan Leather Mules / Kolhapuris", price: 1499, brand: "Metro" }
+            { id: "art_chinos_cream", name: "Off-White Relaxed Cotton Chinos", price: 1799, brand: "Snitch", imageUrl: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=400&auto=format&fit=crop&q=80" },
+            { id: "art_kolhapuri_tan", name: "Handcrafted Tan Leather Mules / Kolhapuris", price: 1499, brand: "Metro", imageUrl: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&auto=format&fit=crop&q=80" }
           ]
         },
         {
@@ -258,12 +395,26 @@ export const wardrobeDatabase = {
             "Can also be styled effortlessly with rolled chinos and a white linen shirt."
           ],
           demographicProof: {
-            acceptanceRate: "87% purchase rate for festive festive wear pairings in Karnataka & Maharashtra",
+            acceptanceRate: "87% purchase rate for festive wear pairings in Karnataka & Maharashtra",
             returnsRate: "2.9% return rate",
             socialSentiment: "Top-rated comfort footwear for extended wedding & temple events."
           },
+          permutations: [
+            {
+              title: "Temple & Traditional Puja Ensemble",
+              pieces: ["Tan Leather Kolhapuris", "Navy Slub Linen Kurta (#4)", "Jet Black Chinos (#6)"],
+              description: "Solves the exact bare-foot/slip-on footwear void seen in temple photo #6.",
+              occasion: "Religious / Family Function"
+            },
+            {
+              title: "Resort & Summer Casual",
+              pieces: ["Tan Leather Kolhapuris", "Sage Green Linen Shirt", "Rolled Beige Chinos"],
+              description: "Breathable open slip-on comfort for holiday dinners.",
+              occasion: "Summer Vacation"
+            }
+          ],
           matchingArtefacts: [
-            { name: "Woven Brass Buckle Braided Belt", price: 799, brand: "Fossil" }
+            { id: "art_braided_belt", name: "Woven Brass Buckle Braided Belt", price: 799, brand: "Fossil", imageUrl: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&auto=format&fit=crop&q=80" }
           ]
         }
       ]
@@ -286,33 +437,7 @@ export const wardrobeDatabase = {
         hip: "36 inches",
         inseam: "28 inches"
       },
-      brandSizingFramework: {
-        "Zara": {
-          predictedSize: "S (Tops) / 28 EU 36 (Bottoms)",
-          fitRecommendation: "Standard S provides tailored shoulders without sleeve length dragging past wrist.",
-          fitConfidence: 95
-        },
-        "Mango": {
-          predictedSize: "XS - S",
-          fitRecommendation: "Relaxed European cut; XS for fitted silhouette, S for fluid layering over t-shirts.",
-          fitConfidence: 91
-        },
-        "Myntra Roadster / Tokyo Talkies": {
-          predictedSize: "M",
-          fitRecommendation: "Budget Indian fast fashion cuts run 1 size smaller in armhole depth; Size M prevents tightness.",
-          fitConfidence: 93
-        },
-        "FabIndia / Biba / W": {
-          predictedSize: "XS / 32",
-          fitRecommendation: "Traditional ethnic sizing has significant ease; Size XS gives a neat, non-swamping fit for 5'3\" frame.",
-          fitConfidence: 97
-        },
-        "Westside (Nuon / Wardrobe)": {
-          predictedSize: "S",
-          fitRecommendation: "Tailored for contemporary Indian urban proportions, true to size.",
-          fitConfidence: 94
-        }
-      },
+      brandSizingFramework: calculateBrandSizes('female', 34, 28, "5'3\""),
       wardrobeHealth: {
         healthScore: 84,
         totalItemsDetected: 5,
@@ -446,9 +571,23 @@ export const wardrobeDatabase = {
             returnsRate: "3.2% return rate (wide-leg has highest fit tolerance)",
             socialSentiment: "Trend #1 on Instagram Reels for 'Indo-Western Workwear'."
           },
+          permutations: [
+            {
+              title: "Bohemian Festive Showstopper",
+              pieces: ["Ecru Wide-Leg Palazzos", "Black Floral Embroidered Jacket (#4)", "Oxidized Silver Earrings"],
+              description: "Light cream base makes the colorful pastel Resham embroidery pop dramatically.",
+              occasion: "Festive Dinner & Cocktail"
+            },
+            {
+              title: "Airy Sunday Brunch",
+              pieces: ["Ecru Wide-Leg Palazzos", "Dusty Rose Shrug (#1)", "White Core Tee (#2)"],
+              description: "Creates an elongating, breathable silhouette that looks graceful in outdoor cafe settings.",
+              occasion: "Weekend Outing"
+            }
+          ],
           matchingArtefacts: [
-            { name: "Handcrafted Oxidized Silver Jhumka Hoops", price: 699, brand: "Tribe Amrapali / Zaveri" },
-            { name: "Rose-Gold Metallic Strappy Flat Mules", price: 1299, brand: "Catwalk" }
+            { id: "art_silver_jhumkas", name: "Handcrafted Oxidized Silver Jhumka Hoops", price: 699, brand: "Tribe Amrapali / Zaveri", imageUrl: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&auto=format&fit=crop&q=80" },
+            { id: "art_rose_mules", name: "Rose-Gold Metallic Strappy Flat Mules", price: 1299, brand: "Catwalk", imageUrl: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&auto=format&fit=crop&q=80" }
           ]
         },
         {
@@ -476,8 +615,16 @@ export const wardrobeDatabase = {
             returnsRate: "1.9% return rate",
             socialSentiment: "Celebrated across fashion subreddits as the ultimate opaque white t-shirt."
           },
+          permutations: [
+            {
+              title: "Clean Girl Core",
+              pieces: ["Heavyweight Supima Tee", "Black Tailored Pants (#3)", "Minimal Gold Chain"],
+              description: "Structured, non-see-through cotton gives a sophisticated minimalist workplace uniform.",
+              occasion: "Creative Agency Work"
+            }
+          ],
           matchingArtefacts: [
-            { name: "Minimalist Triple-Layer Gold Chain", price: 499, brand: "Giva" }
+            { id: "art_gold_chain", name: "Minimalist Triple-Layer Gold Chain", price: 499, brand: "Giva", imageUrl: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=400&auto=format&fit=crop&q=80" }
           ]
         },
         {
@@ -505,15 +652,22 @@ export const wardrobeDatabase = {
             returnsRate: "1.5% return rate",
             socialSentiment: "Featured in top 10 Indo-Western bridal/festive guest edits."
           },
+          permutations: [
+            {
+              title: "Royal Indo-Western Glam",
+              pieces: ["Mirror Choker Set", "Floral Embroidered Jacket (#4)", "Black High-Rise Pants (#3)"],
+              description: "Harmonizes mirror reflection with Resham thread embroidery for festive evenings.",
+              occasion: "Diwali / Wedding Reception"
+            }
+          ],
           matchingArtefacts: [
-            { name: "Raw Silk Black Envelope Clutch with Zari Border", price: 999, brand: "Biba" }
+            { id: "art_silk_clutch", name: "Raw Silk Black Envelope Clutch with Zari Border", price: 999, brand: "Biba", imageUrl: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&auto=format&fit=crop&q=80" }
           ]
         }
       ]
     }
   ],
 
-  // Instagram Trending Looks that match and elevate the users' styles
   instagramTrends: [
     {
       id: "trend_1",
@@ -524,31 +678,40 @@ export const wardrobeDatabase = {
       trendVelocity: "🔥 Viral (2.4M Reels Views this week)",
       heroImage: "/wardrobe_assets/media_1794917831790_7aa27a1f.jpg",
       inspirationDesc: "Directly mimics Ananya's black floral embroidered jacket aesthetic, paired with breathable high-rise linen palazzos and oxidized silver jewellery for effortless street & festive elegance.",
+      alreadyOwnsMatchingItem: {
+        name: "Black Resham Floral Embroidered Jacket",
+        itemId: "ananya_item_4",
+        savingValue: 2499
+      },
       bundleItems: [
         {
           name: "Black Resham Floral Embroidered Crop Shrug",
           brand: "Jaypore / Aks",
           price: 2499,
           link: "https://www.myntra.com/shrugs?f=Color%3ABlack&rawQuery=embroidered%20shrug",
-          store: "Myntra"
+          store: "Myntra",
+          isOwned: true
         },
         {
           name: "Ecru Pleated High-Rise Wide-Leg Trousers",
           brand: "Mango",
           price: 1899,
           link: "https://www.myntra.com/trousers?f=Color%3AOff%20White&rawQuery=pleated%20palazzo",
-          store: "Myntra"
+          store: "Myntra",
+          isOwned: false
         },
         {
           name: "Boho Oxidized Silver Mirror Jhumkas",
           brand: "Zaveri Pearls",
           price: 599,
           link: "https://www.amazon.in/s?k=oxidised+jhumkas+for+women",
-          store: "Amazon"
+          store: "Amazon",
+          isOwned: false
         }
       ],
       bundleTotal: 4997,
       bundleDiscountPrice: 4249,
+      smartNetPrice: 2199, // price if user skips the owned item!
       bundleSavings: "Save 15% (₹748 off) when bundled"
     },
     {
@@ -560,31 +723,40 @@ export const wardrobeDatabase = {
       trendVelocity: "📈 Trending (+48% search volume this month)",
       heroImage: "/wardrobe_assets/media_1794917831520_bfd43708.jpg",
       inspirationDesc: "Echoes Ananya's slate blue teddy fleece pullover, styled with relaxed straight denim and sleek mini sunglasses for off-duty comfort.",
+      alreadyOwnsMatchingItem: {
+        name: "Slate Blue Teddy Boucle Fleece Pullover",
+        itemId: "ananya_item_5",
+        savingValue: 1999
+      },
       bundleItems: [
         {
           name: "Powder Blue Boucle Fleece Quarter-Zip Pullover",
           brand: "H&M / Uniqlo",
           price: 1999,
           link: "https://www.myntra.com/sweaters?f=Color%3ABlue&rawQuery=fleece%20pullover",
-          store: "Myntra"
+          store: "Myntra",
+          isOwned: true
         },
         {
           name: "Vintage Wash High-Rise Straight Jeans",
           brand: "Levi's",
           price: 2699,
           link: "https://www.amazon.in/s?k=levis+women+straight+jeans",
-          store: "Amazon"
+          store: "Amazon",
+          isOwned: false
         },
         {
           name: "Tortoise-Shell Oval Minimalist Acetate Sunglasses",
           brand: "Vincent Chase / Lenskart",
           price: 999,
           link: "https://www.flipkart.com/search?q=sunglasses+women+retro+oval",
-          store: "Flipkart"
+          store: "Flipkart",
+          isOwned: false
         }
       ],
       bundleTotal: 5697,
       bundleDiscountPrice: 4849,
+      smartNetPrice: 3299,
       bundleSavings: "Save 15% (₹848 off) when bundled"
     },
     {
@@ -596,31 +768,40 @@ export const wardrobeDatabase = {
       trendVelocity: "🔥 Viral (1.8M Reels Views)",
       heroImage: "/wardrobe_assets/media_1794917831823_7659c378.jpg",
       inspirationDesc: "Directly inspired by Aditya's navy mandarin-collar short kurta at the palace/temple. Upgraded with handcrafted tan leather footwear and a braided belt for an effortlessly suave look.",
+      alreadyOwnsMatchingItem: {
+        name: "Indigo Slub Linen Short Kurta",
+        itemId: "aditya_item_4",
+        savingValue: 2199
+      },
       bundleItems: [
         {
           name: "Midnight Indigo Pure Slub Linen Short Kurta",
           brand: "FabIndia / Manyavar",
           price: 2199,
           link: "https://www.myntra.com/men-kurtas?f=Color%3ABlue&rawQuery=short%20kurta%20men",
-          store: "Myntra"
+          store: "Myntra",
+          isOwned: true
         },
         {
           name: "Jet Black Tailored Stretch Chinos",
           brand: "Rare Rabbit / Zara",
           price: 2299,
           link: "https://www.amazon.in/s?k=mens+black+slim+chinos",
-          store: "Amazon"
+          store: "Amazon",
+          isOwned: true
         },
         {
           name: "Handmade Tan Leather Padded Kolhapuris",
           brand: "Metro / Red Tape",
           price: 1699,
           link: "https://www.flipkart.com/search?q=men+leather+kolhapuri+mules",
-          store: "Flipkart"
+          store: "Flipkart",
+          isOwned: false
         }
       ],
       bundleTotal: 6197,
       bundleDiscountPrice: 5299,
+      smartNetPrice: 1699, // Only needs the Kolhapuris!
       bundleSavings: "Save 15% (₹898 off) when bundled"
     },
     {
@@ -632,31 +813,40 @@ export const wardrobeDatabase = {
       trendVelocity: "⚡ Sustained Staple (#1 in Tier-1 IT Hubs)",
       heroImage: "/wardrobe_assets/media_1794917831524_9a688f86.jpg",
       inspirationDesc: "Refines Aditya's signature office polo & denim fit check into an optimized daily uniform with zero decision fatigue.",
+      alreadyOwnsMatchingItem: {
+        name: "Structured Navy Pique Polo",
+        itemId: "aditya_item_1",
+        savingValue: 1299
+      },
       bundleItems: [
         {
           name: "Navy Tipped Collar 240 GSM Pique Polo",
           brand: "Snitch",
           price: 1299,
           link: "https://www.myntra.com/tshirts?f=Color%3ANavy%20Blue&rawQuery=snitch%20polo",
-          store: "Myntra"
+          store: "Myntra",
+          isOwned: true
         },
         {
           name: "Mid-Wash Ring-Spun Slim 512 Jeans",
           brand: "Levi's",
           price: 2999,
           link: "https://www.amazon.in/s?k=levis+512+slim+tapered+men",
-          store: "Amazon"
+          store: "Amazon",
+          isOwned: true
         },
         {
           name: "Minimalist Clean White Leather Low-Top Sneakers",
           brand: "Puma / HRX",
           price: 2499,
           link: "https://www.flipkart.com/search?q=white+leather+sneakers+men",
-          store: "Flipkart"
+          store: "Flipkart",
+          isOwned: false
         }
       ],
       bundleTotal: 6797,
       bundleDiscountPrice: 5799,
+      smartNetPrice: 2499,
       bundleSavings: "Save 15% (₹998 off) when bundled"
     }
   ]
