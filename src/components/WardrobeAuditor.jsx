@@ -84,7 +84,7 @@ export default function WardrobeAuditor({
       currentPrice: parseInt(newItemPrice) || 1499,
       productUrl: `https://www.myntra.com/${newItemCategory.toLowerCase()}?rawQuery=${encodeURIComponent(newItemName)}`,
       garmentImageUrl: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&auto=format&fit=crop&q=80",
-      detectedInPhotos: [profile.avatar],
+      detectedInPhotos: [profile.avatar || "/wardrobe_assets/garments/studio_ananya_shrug.png"],
       detectedLocationNote: "Manually registered into closet inventory",
       fitType: "Tailored Regular Fit",
       description: `High-durability ${newItemFabric} designed for ${newItemOccasion} styling. Verified compatible with existing wardrobe pieces.`,
@@ -531,7 +531,7 @@ export default function WardrobeAuditor({
             <div className="p-5 sm:p-6 space-y-4">
               <div className="relative rounded-2xl overflow-hidden bg-slate-900 max-h-[460px] flex items-center justify-center">
                 <img
-                  src={previewPhotoItem.detectedInPhotos[0] || profile.avatar}
+                  src={previewPhotoItem.detectedInPhotos[0] || previewPhotoItem.garmentImageUrl}
                   alt={previewPhotoItem.name}
                   className="max-h-[440px] w-auto object-contain"
                 />

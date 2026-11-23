@@ -506,7 +506,7 @@ export const wardrobeDatabase = {
       profession: "Creative & Brand Strategist",
       city: "Bengaluru, Karnataka",
       demographicTag: "Urban Creative Professional (23-28 Yrs)",
-      avatar: "/wardrobe_assets/media_1794917831520_bfd43708.jpg",
+      avatar: null, // Profile photo removed as requested; uses chic stylized avatar badge
       bodyProportions: {
         height: "5'3\" (160 cm)",
         heightCm: 160,

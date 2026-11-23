@@ -15,28 +15,28 @@ import {
   FolderOpen,
   Cloud,
   CheckSquare,
-  Square
+  Square,
+  Trash2,
+  AlertTriangle
 } from 'lucide-react';
 
 export default function PhotoScanModal({ isOpen, onClose, onFinishScan }) {
   const [activeTab, setActiveTab] = useState('google'); // 'google' | 'local'
   const [isGoogleConnected, setIsGoogleConnected] = useState(true);
   const [selectedAlbum, setSelectedAlbum] = useState('all');
-  const [selectedPhotoIds, setSelectedPhotoIds] = useState(['gp1', 'gp2', 'gp3', 'gp4', 'gp5', 'gp6']);
+  const [selectedPhotoIds, setSelectedPhotoIds] = useState(['gp2', 'gp3', 'gp4', 'gp5', 'gp6']);
   const [scanning, setScanning] = useState(false);
   const [scanStep, setScanStep] = useState(0);
   const [customPhotos, setCustomPhotos] = useState([]);
 
-  if (!isOpen) return null;
-
-  // Google Photos Library Mock / Integrated Dataset
-  const googlePhotosLibrary = [
+  // Initial Google Photos Library Dataset (Personal portrait removed; clean studio flatlay used)
+  const initialGooglePhotos = [
     {
       id: "gp1",
-      album: "fashion",
-      path: "/wardrobe_assets/media_1794917831520_bfd43708.jpg",
+      album: "closet",
+      path: "/wardrobe_assets/garments/studio_ananya_fleece.png",
       date: "Nov 21, 2026",
-      detectedPerson: "Ananya",
+      detectedPerson: "Wardrobe Flatlay",
       garment: "Slate Blue Fleece Pullover",
       status: "Detected: Upper Layering (96% conf)"
     },
@@ -114,10 +114,14 @@ export default function PhotoScanModal({ isOpen, onClose, onFinishScan }) {
     }
   ];
 
+  const [photosList, setPhotosList] = useState(initialGooglePhotos);
+
+  if (!isOpen) return null;
+
   // Filter photos by selected album
   const visiblePhotos = selectedAlbum === 'all'
-    ? googlePhotosLibrary
-    : googlePhotosLibrary.filter(p => p.album === selectedAlbum);
+    ? photosList
+    : photosList.filter(p => p.album === selectedAlbum);
 
   const toggleSelectPhoto = (id) => {
     setSelectedPhotoIds(prev => 
@@ -132,6 +136,33 @@ export default function PhotoScanModal({ isOpen, onClose, onFinishScan }) {
 
   const handleDeselectAll = () => {
     setSelectedPhotoIds([]);
+  };
+
+  // Delete a single photo from Google Photos library
+  const handleDeletePhoto = (e, photoId) => {
+    e.stopPropagation();
+    setPhotosList(prev => prev.filter(p => p.id !== photoId));
+    setSelectedPhotoIds(prev => prev.filter(id => id !== photoId));
+  };
+
+  // Batch delete all currently selected photos
+  const handleDeleteSelectedPhotos = () => {
+    if (!selectedPhotoIds.length) return;
+    if (window.confirm(`Delete ${selectedPhotoIds.length} selected photos from this library?`)) {
+      setPhotosList(prev => prev.filter(p => !selectedPhotoIds.includes(p.id)));
+      setSelectedPhotoIds([]);
+    }
+  };
+
+  // Delete a locally uploaded custom photo
+  const handleDeleteCustomPhoto = (e, customId) => {
+    e.stopPropagation();
+    setCustomPhotos(prev => prev.filter(p => p.id !== customId));
+  };
+
+  const handleResetPhotos = () => {
+    setPhotosList(initialGooglePhotos);
+    setSelectedPhotoIds(['gp2', 'gp3', 'gp4', 'gp5', 'gp6']);
   };
 
   const handleFileUpload = (e) => {
@@ -188,7 +219,7 @@ export default function PhotoScanModal({ isOpen, onClose, onFinishScan }) {
                 </span>
               </div>
               <p className="text-xs text-slate-500">
-                Sync lifestyle photos & mirror selfies to automatically catalog your wardrobe
+                Sync or upload lifestyle photos & mirror selfies to automatically catalog your wardrobe
               </p>
             </div>
           </div>
@@ -212,7 +243,6 @@ export default function PhotoScanModal({ isOpen, onClose, onFinishScan }) {
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
-              {/* Google Photos Colorful Icon */}
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path fill="#EA4335" d="M12 5V0H7a5 5 0 0 0 5 5z"/>
                 <path fill="#4285F4" d="M19 12h5V7a5 5 0 0 0-5 5z"/>
@@ -235,6 +265,11 @@ export default function PhotoScanModal({ isOpen, onClose, onFinishScan }) {
             >
               <Upload className="w-4 h-4" />
               <span>Local Device / Camera</span>
+              {customPhotos.length > 0 && (
+                <span className="text-[10px] bg-slate-700 text-white px-1.5 rounded-full">
+                  {customPhotos.length}
+                </span>
+              )}
             </button>
           </div>
 
@@ -265,7 +300,7 @@ export default function PhotoScanModal({ isOpen, onClose, onFinishScan }) {
                       <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
                     </div>
                     <p className="text-[11px] text-slate-500">
-                      OAuth 2.0 Secure Token • Read-only access to image metadata & EXIF timestamps
+                      OAuth 2.0 Secure Token • Delete unwanted images or ingest selected for vision audit
                     </p>
                   </div>
                 </div>
@@ -294,7 +329,7 @@ export default function PhotoScanModal({ isOpen, onClose, onFinishScan }) {
                         : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                     }`}
                   >
-                    All Photos ({googlePhotosLibrary.length})
+                    All Photos ({photosList.length})
                   </button>
                   <button
                     onClick={() => setSelectedAlbum('fashion')}
@@ -304,7 +339,7 @@ export default function PhotoScanModal({ isOpen, onClose, onFinishScan }) {
                         : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                     }`}
                   >
-                    👗 Outfits & Full Body (3)
+                    👗 Outfits & Full Body ({photosList.filter(p => p.album === 'fashion').length})
                   </button>
                   <button
                     onClick={() => setSelectedAlbum('festive')}
@@ -314,7 +349,7 @@ export default function PhotoScanModal({ isOpen, onClose, onFinishScan }) {
                         : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                     }`}
                   >
-                    ✨ Festive & Social (3)
+                    ✨ Festive & Social ({photosList.filter(p => p.album === 'festive').length})
                   </button>
                   <button
                     onClick={() => setSelectedAlbum('closet')}
@@ -324,10 +359,11 @@ export default function PhotoScanModal({ isOpen, onClose, onFinishScan }) {
                         : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                     }`}
                   >
-                    🧥 Studio Flat-Lays (3)
+                    🧥 Studio Flat-Lays ({photosList.filter(p => p.album === 'closet').length})
                   </button>
                 </div>
 
+                {/* Selection & Batch Delete Controls */}
                 <div className="flex items-center space-x-2 text-xs">
                   <button
                     onClick={handleSelectAll}
@@ -344,58 +380,92 @@ export default function PhotoScanModal({ isOpen, onClose, onFinishScan }) {
                     <Square className="w-3.5 h-3.5" />
                     <span>Clear</span>
                   </button>
+
+                  {/* Batch Delete Selected Images Button */}
+                  {selectedPhotoIds.length > 0 && (
+                    <>
+                      <span className="text-slate-300">|</span>
+                      <button
+                        onClick={handleDeleteSelectedPhotos}
+                        className="text-red-600 hover:text-red-700 font-bold flex items-center space-x-1 bg-red-50 hover:bg-red-100 px-2 py-0.5 rounded-lg border border-red-200 transition"
+                        title="Delete selected photos"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Delete ({selectedPhotoIds.length})</span>
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
 
-              {/* Photo Grid with Checkboxes */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-[380px] overflow-y-auto p-1">
-                {visiblePhotos.map((photo) => {
-                  const isSelected = selectedPhotoIds.includes(photo.id);
-                  return (
-                    <div
-                      key={photo.id}
-                      onClick={() => toggleSelectPhoto(photo.id)}
-                      className={`relative rounded-2xl overflow-hidden border-2 cursor-pointer transition-all aspect-square group ${
-                        isSelected 
-                          ? 'border-rose-600 shadow-md ring-2 ring-rose-500/30' 
-                          : 'border-slate-200 hover:border-slate-300 opacity-75'
-                      }`}
-                    >
-                      <img
-                        src={photo.path}
-                        alt={photo.garment}
-                        className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                      />
-                      
-                      {/* Checkbox badge */}
-                      <div className="absolute top-2 left-2 z-10">
-                        <div className={`w-6 h-6 rounded-lg flex items-center justify-center transition shadow-sm ${
-                          isSelected ? 'bg-rose-600 text-white' : 'bg-white/80 text-slate-400'
-                        }`}>
-                          {isSelected && <Check className="w-4 h-4 stroke-[3]" />}
+              {/* Photo Grid with Checkboxes & Individual Delete Buttons */}
+              {visiblePhotos.length > 0 ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-[380px] overflow-y-auto p-1">
+                  {visiblePhotos.map((photo) => {
+                    const isSelected = selectedPhotoIds.includes(photo.id);
+                    return (
+                      <div
+                        key={photo.id}
+                        onClick={() => toggleSelectPhoto(photo.id)}
+                        className={`relative rounded-2xl overflow-hidden border-2 cursor-pointer transition-all aspect-square group ${
+                          isSelected 
+                            ? 'border-rose-600 shadow-md ring-2 ring-rose-500/30' 
+                            : 'border-slate-200 hover:border-slate-300 opacity-80'
+                        }`}
+                      >
+                        <img
+                          src={photo.path}
+                          alt={photo.garment}
+                          className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                        />
+                        
+                        {/* Checkbox badge */}
+                        <div className="absolute top-2 left-2 z-10">
+                          <div className={`w-6 h-6 rounded-lg flex items-center justify-center transition shadow-sm ${
+                            isSelected ? 'bg-rose-600 text-white' : 'bg-white/80 text-slate-400'
+                          }`}>
+                            {isSelected && <Check className="w-4 h-4 stroke-[3]" />}
+                          </div>
+                        </div>
+
+                        {/* Top Right: Delete Button on Card */}
+                        <div className="absolute top-2 right-2 z-20 flex items-center space-x-1">
+                          <button
+                            onClick={(e) => handleDeletePhoto(e, photo.id)}
+                            className="w-6 h-6 rounded-lg bg-red-600 hover:bg-red-700 text-white flex items-center justify-center transition shadow-md opacity-90 group-hover:opacity-100 hover:scale-110"
+                            title="Delete this photo"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+
+                        {/* Bottom Info Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent flex flex-col justify-end p-2.5 text-white pointer-events-none">
+                          <span className="text-xs font-bold truncate block">{photo.detectedPerson}</span>
+                          <span className="text-[10px] text-amber-300 truncate">{photo.garment}</span>
+                          <span className="text-[9px] text-slate-300 truncate block mt-0.5">{photo.status}</span>
                         </div>
                       </div>
-
-                      {/* Google Photos pill badge */}
-                      <div className="absolute top-2 right-2 z-10 bg-black/50 backdrop-blur-md px-1.5 py-0.5 rounded text-[9px] text-white font-medium">
-                        {photo.date}
-                      </div>
-
-                      {/* Bottom Info Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent flex flex-col justify-end p-2.5 text-white">
-                        <span className="text-xs font-bold truncate block">{photo.detectedPerson}</span>
-                        <span className="text-[10px] text-amber-300 truncate">{photo.garment}</span>
-                        <span className="text-[9px] text-slate-300 truncate block mt-0.5">{photo.status}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="p-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-300 space-y-3">
+                  <Trash2 className="w-8 h-8 text-slate-400 mx-auto" />
+                  <p className="text-sm font-semibold text-slate-700">No photos in this album (all deleted or empty)</p>
+                  <button
+                    onClick={handleResetPhotos}
+                    className="px-3.5 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-slate-800 transition"
+                  >
+                    Restore Sample Photos
+                  </button>
+                </div>
+              )}
 
               {/* Quick stats on selected photos */}
-              <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between text-xs text-slate-600">
+              <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-600 gap-2">
                 <span>
-                  <strong>{selectedPhotoIds.length}</strong> photos selected for AI ingestion
+                  <strong>{selectedPhotoIds.length}</strong> of {photosList.length} photos selected for AI ingestion
                 </span>
                 <span className="text-emerald-700 font-bold flex items-center space-x-1">
                   <CheckCircle2 className="w-3.5 h-3.5" />
@@ -432,15 +502,35 @@ export default function PhotoScanModal({ isOpen, onClose, onFinishScan }) {
               </div>
 
               {customPhotos.length > 0 && (
-                <div>
-                  <span className="text-xs font-bold text-slate-600 block mb-2">
-                    Locally Uploaded Files ({customPhotos.length}):
-                  </span>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-600">
+                      Locally Uploaded Files ({customPhotos.length}):
+                    </span>
+                    <button
+                      onClick={() => setCustomPhotos([])}
+                      className="text-xs text-red-600 hover:text-red-700 font-semibold flex items-center space-x-1"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Delete All Uploads</span>
+                    </button>
+                  </div>
+
                   <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                     {customPhotos.map((item) => (
-                      <div key={item.id} className="relative rounded-xl overflow-hidden border border-slate-200 aspect-square">
+                      <div key={item.id} className="relative rounded-xl overflow-hidden border border-slate-200 aspect-square group">
                         <img src={item.path} alt="" className="w-full h-full object-cover" />
-                        <div className="absolute inset-0 bg-black/50 flex items-end p-1 text-[9px] text-white truncate">
+                        
+                        {/* Delete single custom upload button */}
+                        <button
+                          onClick={(e) => handleDeleteCustomPhoto(e, item.id)}
+                          className="absolute top-1 right-1 p-1 bg-red-600 hover:bg-red-700 text-white rounded-md transition shadow z-10 opacity-90 group-hover:opacity-100"
+                          title="Delete photo"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+
+                        <div className="absolute inset-0 bg-black/50 flex items-end p-1 text-[9px] text-white truncate pointer-events-none">
                           {item.garment}
                         </div>
                       </div>

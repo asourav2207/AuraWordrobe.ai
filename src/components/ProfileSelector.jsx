@@ -38,11 +38,17 @@ export default function ProfileSelector({ profiles, activeProfileId, onSelectPro
                       : 'bg-white/10 hover:bg-white/15 text-slate-200 border-white/10'
                   }`}
                 >
-                  <img
-                    src={profile.avatar}
-                    alt={profile.name}
-                    className="w-12 h-12 rounded-xl object-cover border-2 border-white/50 shadow"
-                  />
+                  {profile.avatar && profile.id !== 'user_ananya' ? (
+                    <img
+                      src={profile.avatar}
+                      alt={profile.name}
+                      className="w-12 h-12 rounded-xl object-cover border-2 border-white/50 shadow"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-rose-500 via-pink-600 to-purple-600 flex items-center justify-center border-2 border-white/50 shadow text-white font-serif font-bold text-lg">
+                      {profile.name[0]}
+                    </div>
+                  )}
                   <div className="text-left">
                     <div className="flex items-center space-x-1.5">
                       <span className="font-bold text-sm sm:text-base">{profile.name}</span>
